@@ -1,0 +1,178 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { HiMenu, HiX, HiSearch } from "react-icons/hi";
+import { usePathname } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+
+interface User {
+  username: string;
+}
+
+const Header: React.FC = () => {
+  const pathname = usePathname();
+
+  // جلوگیری از نمایش Header در صفحات Auth
+  if (pathname?.startsWith("/auth")) return null;
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+
+  const navLinks = [
+    { href: "/home", label: "Home" },
+    { href: "/explore", label: "Explore" },
+    { href: "/about", label: "About Us" },
+    { href: "/help", label: "Help & Support" },
+  ];
+
+  // بررسی وضعیت کاربر از Supabase
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user) {
+        const username = data.session.user.user_metadata?.username || "User";
+        setUser({ username });
+      } else {
+        setUser(null);
+      }
+    };
+    fetchUser();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          const username = session.user.user_metadata?.username || "User";
+          setUser({ username });
+        } else {
+          setUser(null);
+        }
+      }
+    );
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  return (
+    <nav className="bg-white border-b border-[#eae8fb]">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 md:h-20">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <Link href="/">
+            <Image src="/Vector.svg" alt="logo" width={25} height={20} />
+          </Link>
+        </div>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex flex-grow justify-center gap-10">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setActiveLink(link.href)}
+              className={`text-sm font-medium transition-colors ${
+                activeLink === link.href
+                  ? "text-[#5b4bff]"
+                  : "text-gray-700 hover:text-black"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Search & Auth (Desktop) */}
+        <div className="hidden md:flex items-center gap-4">
+          <div className="relative">
+            <HiSearch
+              className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
+            <input
+              type="text"
+              placeholder="Search brand, category, tag or..."
+              className="border border-gray-200 rounded-full pl-8 pr-3 py-1.5 text-sm w-64 focus:outline-none focus:ring-1 focus:ring-[#5b4bff]"
+            />
+          </div>
+
+          {user ? (
+            <div className="flex items-center justify-center px-4 py-1.5 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full cursor-pointer">
+              {user.username}
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <Link
+                href="/auth/login"
+                className="px-4 py-1.5 border border-[#5b4bff] text-[#5b4bff] rounded-full text-sm font-medium hover:bg-[#f2f0ff] transition inline-block text-center"
+              >
+                Login
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="px-4 py-1.5 border border-[#5b4bff] bg-[#5b4bff] text-white rounded-full text-sm font-medium hover:bg-[#493ae0] transition inline-block text-center"
+              >
+                Register
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden text-gray-700"
+        >
+          {isMenuOpen ? <HiX size={26} /> : <HiMenu size={26} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 px-4 py-5 space-y-4 text-center">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => {
+                setActiveLink(link.href);
+                setIsMenuOpen(false);
+              }}
+              className={`block text-base font-medium ${
+                activeLink === link.href
+                  ? "text-[#5b4bff]"
+                  : "text-gray-700 hover:text-black"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          {user ? (
+            <div className="block px-4 py-2 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full">
+              {user.username}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/auth/login"
+                className="px-4 py-1.5 border border-[#5b4bff] text-[#5b4bff] rounded-full text-sm font-medium hover:bg-[#f2f0ff] transition inline-block text-center"
+              >
+                Login
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="px-4 py-1.5 border border-[#5b4bff] bg-[#5b4bff] text-white rounded-full text-sm font-medium hover:bg-[#493ae0] transition inline-block text-center"
+              >
+                Register
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Header;
