@@ -5,5 +5,5 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div>{children}</div>; // بدون Header و Footer
+  return <div>{children}</div>;
 }

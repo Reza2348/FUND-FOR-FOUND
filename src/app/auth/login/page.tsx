@@ -123,6 +123,15 @@ export default function LoginPage() {
             Sign Up
           </Link>
         </p>
+        <p className="text-center mt-4 text-sm">
+          Did you forget your password?
+          <Link
+            href="/auth/Forgotpassword"
+            className="text-orange-500 ml-1 hover:underline"
+          >
+            Forgot password
+          </Link>
+        </p>
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>

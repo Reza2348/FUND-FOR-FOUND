@@ -37,7 +37,7 @@ export default function SignUpPage() {
         email,
         password,
         options: {
-          data: { username, phone: mobileNumber }, // user_metadata
+          data: { username, phone: mobileNumber },
         },
       });
 
@@ -49,7 +49,7 @@ export default function SignUpPage() {
             user_id: userData.user.id,
             username,
             phone: mobileNumber,
-            email, // ایمیل را اضافه کنید
+            email,
           },
         ]);
         if (profileError) throw profileError;
@@ -158,15 +158,6 @@ export default function SignUpPage() {
             className="text-orange-500 ml-1 hover:underline"
           >
             Login
-          </Link>
-        </p>
-        <p className="text-center mt-4 text-sm">
-          Did you forget your password?
-          <Link
-            href="/auth/Forgotpassword"
-            className="text-orange-500 ml-1 hover:underline"
-          >
-            Forgot password
           </Link>
         </p>
       </div>

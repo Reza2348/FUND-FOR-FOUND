@@ -48,7 +48,7 @@ export default function Footer() {
   if (pathname?.startsWith("/auth")) return null;
 
   return (
-    <footer className="bg-[#F5F5F5] text-[#444444]">
+    <footer className="bg-[#F5F5F5] text-[#444444] rounded-2xl mt-[412px]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {FOOTER_NAV.map((section) => (
@@ -79,8 +79,7 @@ export default function Footer() {
           ))}
         </div>
       </div>
-
-      <div className="border-t border-gray-200">
+      <div className="border-t border-[#AA99EC]">
         <div className="max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4 mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div>
             <button className="text-sm text-[#123D6F] border border-white rounded-md px-2 py-1">

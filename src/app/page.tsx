@@ -3,13 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { IoBriefcaseOutline } from "react-icons/io5";
 
 export default function Home() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // بررسی وضعیت کاربر هنگام بارگذاری صفحه
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getSession();
@@ -20,7 +20,6 @@ export default function Home() {
     };
     fetchUser();
 
-    // گوش دادن به تغییرات وضعیت ورود کاربر
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
@@ -34,9 +33,9 @@ export default function Home() {
 
   const handleStartClick = () => {
     if (user) {
-      router.push("/form/step-1"); // کاربر وارد شده → مرحله اول فرم
+      router.push("/form/step-1");
     } else {
-      router.push("/auth/login"); // کاربر وارد نشده → صفحه ورود/ثبت‌نام
+      router.push("/auth/login");
     }
   };
 
@@ -48,37 +47,60 @@ export default function Home() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 text-center">
-      <h1 className="text-2xl md:text-3xl font-bold text-blue-800 mb-4">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center">
+      <h1 className="text-2xl md:text-3xl font-bold text-[#270F94] mb-4 mt-11">
         Create your profile and take the first step towards new opportunities
       </h1>
-      <p className="text-gray-600 max-w-xl mb-8">
+      <p className="text-[#717171] max-w-xl mb-8">
         By creating your account, you'll gain access to a thriving community
         where brands and individuals are committed to offering you ongoing
-        support.
+        support. This support network will empower you with the resources,
+        guidance, and connections you need to succeed, ensuring that you're
+        never alone on your journey.
       </p>
 
-      <div className="bg-white border border-gray-300 rounded-xl shadow-md p-8 w-full max-w-sm">
-        <div className="text-4xl mb-4 text-blue-700">💼</div>
-        <h2 className="text-xl font-semibold text-blue-800 mb-2">
-          Brand or organization
-        </h2>
-        <p className="text-sm text-gray-600 mb-6">
-          If your brand is established and you're looking for continuous
-          support, get started now.
-        </p>
-        <button
-          onClick={handleStartClick}
-          className="bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-900 transition"
-        >
-          Start
-        </button>
-        <a
-          href="#"
-          className="block mt-4 text-sm text-gray-500 underline hover:text-gray-700"
-        >
-          Learn more
-        </a>
+      <div
+        className="
+  w-full max-w-[319px] h-auto min-h-[459px]
+  border border-gray-300 text-[#644FC1]
+  rounded-md shadow-sm p-6 sm:p-8
+  flex flex-col items-center justify-between text-center bg-white mx-auto
+  transition-all duration-300
+"
+      >
+        <div className="flex flex-col items-center">
+          <div className="p-4 sm:p-5 bg-[#F0EDFF] rounded-full mb-4 sm:mb-6">
+            <IoBriefcaseOutline
+              size={32}
+              className="text-[#644FC1] sm:size-[36px]"
+            />
+          </div>
+
+          <h2 className="text-lg sm:text-xl font-semibold text-[#644FC1] mb-2">
+            Brand or organization
+          </h2>
+
+          <p className="text-sm text-gray-600 mb-6 px-2 sm:px-4 leading-relaxed">
+            If your brand is established and you're looking for continuous
+            support, get started now.
+          </p>
+        </div>
+
+        <div className="w-full">
+          <button
+            onClick={handleStartClick}
+            className="bg-[#5C4FC1] text-white px-6 py-2 sm:py-3 rounded-md hover:bg-blue-900 transition w-full text-sm sm:text-base cursor-pointer"
+          >
+            Start
+          </button>
+
+          <a
+            href="#"
+            className="block mt-4 text-sm text-gray-500 underline hover:text-gray-700"
+          >
+            Learn more
+          </a>
+        </div>
       </div>
     </div>
   );

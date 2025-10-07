@@ -21,10 +21,10 @@ const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
 
   const navLinks = [
-    { href: "/home", label: "Home" },
-    { href: "/explore", label: "Explore" },
-    { href: "/about", label: "About Us" },
-    { href: "/help", label: "Help & Support" },
+    { href: "/", label: "Home" },
+    { href: "page/explore", label: "Explore" },
+    { href: "/about", label: "AboutUs" },
+    { href: "/help", label: "Help&Support" },
   ];
 
   useEffect(() => {
@@ -54,15 +54,15 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <nav className="bg-white border-b border-[#eae8fb]">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 md:h-20">
+    <nav className="bg-white border-b border-gray-200">
+      <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
         <div className="flex items-center gap-2">
           <Link href="/">
             <Image src="/Vector.svg" alt="logo" width={25} height={20} />
           </Link>
         </div>
 
-        <div className="hidden md:flex flex-grow justify-center gap-10">
+        <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10 lg:ml-[106px]">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -79,7 +79,7 @@ const Header: React.FC = () => {
           ))}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3 lg:gap-4 mt-2 md:mt-0">
           <div className="relative">
             <HiSearch
               className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
@@ -88,7 +88,7 @@ const Header: React.FC = () => {
             <input
               type="text"
               placeholder="Search brand, category, tag or..."
-              className="border border-gray-200 rounded-full pl-8 pr-3 py-1.5 text-sm w-64 focus:outline-none focus:ring-1 focus:ring-[#5b4bff]"
+              className="border border-gray-200 rounded-full pl-8 pr-3 py-1.5 text-sm w-32 sm:w-40 md:w-48 lg:w-64 focus:outline-none focus:ring-1 focus:ring-[#5b4bff] transition-all"
             />
           </div>
 
@@ -97,7 +97,7 @@ const Header: React.FC = () => {
               {user.username}
             </div>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <Link
                 href="/auth/login"
                 className="px-4 py-1.5 border border-[#5b4bff] text-[#5b4bff] rounded-full text-sm font-medium hover:bg-[#f2f0ff] transition inline-block text-center"
