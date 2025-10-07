@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 
-// ----------------- Schema اعتبارسنجی -----------------
 const signUpSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email"),
@@ -19,7 +18,6 @@ const signUpSchema = z.object({
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
-// ----------------- کامپوننت ثبت‌نام -----------------
 export default function SignUpPage() {
   const router = useRouter();
 
@@ -35,7 +33,6 @@ export default function SignUpPage() {
     try {
       const { username, email, password, mobileNumber } = data;
 
-      // ----------------- 1️⃣ ثبت‌نام در Supabase Auth -----------------
       const { data: userData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -46,7 +43,6 @@ export default function SignUpPage() {
 
       if (authError) throw authError;
 
-      // ----------------- 2️⃣ ذخیره در جدول profiles -----------------
       if (userData.user?.id) {
         const { error: profileError } = await supabase.from("profiles").insert([
           {
@@ -59,12 +55,8 @@ export default function SignUpPage() {
         if (profileError) throw profileError;
       }
 
-      // ----------------- 3️⃣ نمایش پیام موفقیت -----------------
-      toast.success(
-        "Registration successful! Please check your email to confirm."
-      );
+      toast.success("Registration successful.");
 
-      // ----------------- 4️⃣ هدایت به صفحه ورود بعد از 1.5 ثانیه -----------------
       setTimeout(() => router.push("/auth/login"), 1500);
     } catch (err: any) {
       console.error("Signup error:", err);
@@ -95,7 +87,6 @@ export default function SignUpPage() {
             )}
           </div>
 
-          {/* Mobile Number */}
           <div>
             <label htmlFor="mobileNumber" className="block font-medium mb-1">
               Mobile number
@@ -113,7 +104,6 @@ export default function SignUpPage() {
             )}
           </div>
 
-          {/* Email */}
           <div>
             <label htmlFor="email" className="block font-medium mb-1">
               Email
@@ -131,7 +121,6 @@ export default function SignUpPage() {
             )}
           </div>
 
-          {/* Password */}
           <div>
             <label htmlFor="password" className="block font-medium mb-1">
               Password
@@ -149,7 +138,6 @@ export default function SignUpPage() {
             )}
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={isSubmitting}

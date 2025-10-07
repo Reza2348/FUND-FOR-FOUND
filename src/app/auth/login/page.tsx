@@ -38,7 +38,6 @@ export default function LoginPage() {
     try {
       const { email, password, username } = data;
 
-      // در Supabase ورود فقط با email و password است
       const { data: loginData, error } = await supabase.auth.signInWithPassword(
         {
           email,
@@ -64,7 +63,6 @@ export default function LoginPage() {
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          {/* Username */}
           <div>
             <label htmlFor="username" className="block font-medium mb-1">
               Username
@@ -81,7 +79,6 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Email */}
           <div>
             <label htmlFor="email">Email</label>
             <input
@@ -95,7 +92,6 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Password */}
           <div>
             <label htmlFor="password">Password</label>
             <input

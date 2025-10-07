@@ -14,7 +14,6 @@ interface User {
 const Header: React.FC = () => {
   const pathname = usePathname();
 
-  // جلوگیری از نمایش Header در صفحات Auth
   if (pathname?.startsWith("/auth")) return null;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,7 +27,6 @@ const Header: React.FC = () => {
     { href: "/help", label: "Help & Support" },
   ];
 
-  // بررسی وضعیت کاربر از Supabase
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getSession();
@@ -58,14 +56,12 @@ const Header: React.FC = () => {
   return (
     <nav className="bg-white border-b border-[#eae8fb]">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 md:h-20">
-        {/* Logo */}
         <div className="flex items-center gap-2">
           <Link href="/">
             <Image src="/Vector.svg" alt="logo" width={25} height={20} />
           </Link>
         </div>
 
-        {/* Desktop Nav */}
         <div className="hidden md:flex flex-grow justify-center gap-10">
           {navLinks.map((link) => (
             <Link
@@ -83,7 +79,6 @@ const Header: React.FC = () => {
           ))}
         </div>
 
-        {/* Search & Auth (Desktop) */}
         <div className="hidden md:flex items-center gap-4">
           <div className="relative">
             <HiSearch
@@ -119,7 +114,6 @@ const Header: React.FC = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="md:hidden text-gray-700"
@@ -128,7 +122,6 @@ const Header: React.FC = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 px-4 py-5 space-y-4 text-center">
           {navLinks.map((link) => (

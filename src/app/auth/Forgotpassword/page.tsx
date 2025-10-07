@@ -11,11 +11,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 const resetPasswordSchema = z
   .object({
-    password: z.string().min(6, "پسورد باید حداقل 6 کاراکتر باشد"),
-    confirmPassword: z.string().min(6, "لطفا تکرار پسورد را وارد کنید"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Please enter the password again."),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "پسورد و تکرار پسورد باید یکسان باشند",
+    message: "Password and password repeat must be the same",
     path: ["confirmPassword"],
   });
 
@@ -38,21 +38,21 @@ export default function ResetPassword() {
       });
       if (error) throw error;
 
-      toast.success("پسورد شما با موفقیت تغییر یافت!");
+      toast.success("Your password has been changed successfully!");
       setTimeout(() => router.push("/auth/login"), 1500);
     } catch (err: any) {
-      toast.error(err.message || "خطای ناشناخته رخ داد");
+      toast.error(err.message || "An unknown error occurred.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-6">تغییر رمز عبور</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Change password</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div>
             <label htmlFor="password" className="block font-medium mb-1">
-              پسورد جدید
+              New password
             </label>
             <input
               id="password"
@@ -68,7 +68,7 @@ export default function ResetPassword() {
           </div>
           <div>
             <label htmlFor="confirmPassword" className="block font-medium mb-1">
-              تکرار پسورد
+              Repeat password
             </label>
             <input
               id="confirmPassword"
@@ -91,7 +91,7 @@ export default function ResetPassword() {
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {isSubmitting ? "در حال تغییر..." : "تغییر رمز عبور"}
+            {isSubmitting ? "Changing..." : "Change password"}
           </button>
         </form>
       </div>
