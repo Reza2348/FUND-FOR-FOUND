@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { IoBriefcaseOutline } from "react-icons/io5";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
@@ -94,12 +95,12 @@ export default function Home() {
             Start
           </button>
 
-          <a
-            href="#"
+          <Link
+            href="/explore"
             className="block mt-4 text-sm text-gray-500 underline hover:text-gray-700"
           >
             Learn more
-          </a>
+          </Link>
         </div>
       </div>
     </div>

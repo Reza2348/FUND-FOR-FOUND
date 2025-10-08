@@ -33,31 +33,39 @@ export default function SignUpPage() {
     try {
       const { username, email, password, mobileNumber } = data;
 
-      const { data: userData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username, phone: mobileNumber },
-        },
-      });
+      const { data: signUpData, error: authError } = await supabase.auth.signUp(
+        {
+          email,
+          password,
+          options: {
+            data: { username, phone: mobileNumber },
+          },
+        }
+      );
 
       if (authError) throw authError;
 
-      if (userData.user?.id) {
-        const { error: profileError } = await supabase.from("profiles").insert([
-          {
-            user_id: userData.user.id,
-            username,
-            phone: mobileNumber,
-            email,
-          },
-        ]);
-        if (profileError) throw profileError;
+      const user = signUpData.user;
+      if (!user) {
+        toast.info("Check your email to confirm sign up first.");
+        return;
       }
 
-      toast.success("Registration successful.");
+      const { error: profileError } = await supabase.from("profiles").insert([
+        {
+          user_id: user.id,
+          username,
+          phone: mobileNumber,
+          email,
+        },
+      ]);
 
-      setTimeout(() => router.push("/auth/login"), 1500);
+      if (profileError) throw profileError;
+
+      toast.success("Registration successful!");
+      setTimeout(() => {
+        router.push("/");
+      }, 1500);
     } catch (err: any) {
       console.error("Signup error:", err);
       toast.error(err.message || "خطای ناشناخته رخ داد");
@@ -70,7 +78,6 @@ export default function SignUpPage() {
         <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          {/* Username */}
           <div>
             <label htmlFor="username" className="block font-medium mb-1">
               Username

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HiMenu, HiX, HiSearch } from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 interface User {
   username: string;
@@ -17,12 +18,15 @@ const Header: React.FC = () => {
   if (pathname?.startsWith("/auth")) return null;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("");
+  const [activeLink, setActiveLink] = useState("/");
   const [user, setUser] = useState<User | null>(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "page/explore", label: "Explore" },
+    { href: "/explore", label: "Explore" },
     { href: "/about", label: "AboutUs" },
     { href: "/help", label: "Help&Support" },
   ];
@@ -52,6 +56,18 @@ const Header: React.FC = () => {
 
     return () => listener.subscription.unsubscribe();
   }, []);
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -80,6 +96,7 @@ const Header: React.FC = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3 lg:gap-4 mt-2 md:mt-0">
+          {/* جستجو */}
           <div className="relative">
             <HiSearch
               className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
@@ -93,8 +110,34 @@ const Header: React.FC = () => {
           </div>
 
           {user ? (
-            <div className="flex items-center justify-center px-4 py-1.5 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full cursor-pointer">
-              {user.username}
+            <div className="relative" ref={userMenuRef}>
+              <div
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center justify-center px-4 py-1.5 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full cursor-pointer select-none"
+              >
+                {user.username}
+              </div>
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-xl py-2 z-50">
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setIsUserMenuOpen(false)}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={async () => {
+                      await supabase.auth.signOut();
+                      setIsUserMenuOpen(false);
+                      router.push("/");
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    exit
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex gap-2 sm:gap-3">
