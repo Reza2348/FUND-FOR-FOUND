@@ -4,27 +4,72 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HiMenu, HiX, HiSearch } from "react-icons/hi";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
+import { TbLogout } from "react-icons/tb";
+import { CgProfile } from "react-icons/cg";
+import { BiBriefcase } from "react-icons/bi";
+import { IoSettingsOutline } from "react-icons/io5";
 
 interface User {
+  id: string;
   username: string;
+  email: string;
 }
+
+interface NavLink {
+  href: string;
+  label: string;
+}
+
+// Utility component for menu items
+const MenuItem: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+  href?: string;
+  isLogout?: boolean;
+}> = ({ icon, label, onClick, href, isLogout = false }) => {
+  const commonClasses =
+    "flex items-center gap-3 py-2 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition";
+  const textClasses = isLogout
+    ? "text-[#505050] hover:text-red-500"
+    : "text-gray-700";
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={`${commonClasses} ${textClasses}`}
+        onClick={onClick}
+      >
+        <div className="w-6 flex items-center justify-center">{icon}</div>
+        <span className="font-medium">{label}</span>
+      </Link>
+    );
+  }
+
+  return (
+    <div onClick={onClick} className={`${commonClasses} ${textClasses}`}>
+      <div className="w-6 flex items-center justify-center">{icon}</div>
+      <span className="font-medium">{label}</span>
+    </div>
+  );
+};
 
 const Header: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
 
   if (pathname?.startsWith("/auth")) return null;
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeLink, setActiveLink] = useState("/");
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [activeLink, setActiveLink] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState<boolean>(false);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
-  const router = useRouter();
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { href: "/", label: "Home" },
     { href: "/explore", label: "Explore" },
     { href: "/about", label: "AboutUs" },
@@ -35,19 +80,26 @@ const Header: React.FC = () => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session?.user) {
-        const username = data.session.user.user_metadata?.username || "User";
-        setUser({ username });
+        const username =
+          (data.session.user.user_metadata?.username as string) || "User";
+        const id = data.session.user.id;
+        const email = data.session.user.email || "";
+        setUser({ id, username, email });
       } else {
         setUser(null);
       }
     };
+
     fetchUser();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (session?.user) {
-          const username = session.user.user_metadata?.username || "User";
-          setUser({ username });
+          const username =
+            (session.user.user_metadata?.username as string) || "User";
+          const id = session.user.id;
+          const email = session.user.email || "";
+          setUser({ id, username, email });
         } else {
           setUser(null);
         }
@@ -56,6 +108,7 @@ const Header: React.FC = () => {
 
     return () => listener.subscription.unsubscribe();
   }, []);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -65,9 +118,16 @@ const Header: React.FC = () => {
         setIsUserMenuOpen(false);
       }
     }
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = async (): Promise<void> => {
+    await supabase.auth.signOut();
+    setIsUserMenuOpen(false);
+    router.push("/");
+  };
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -96,7 +156,6 @@ const Header: React.FC = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3 lg:gap-4 mt-2 md:mt-0">
-          {/* جستجو */}
           <div className="relative">
             <HiSearch
               className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
@@ -113,29 +172,87 @@ const Header: React.FC = () => {
             <div className="relative" ref={userMenuRef}>
               <div
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center justify-center px-4 py-1.5 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full cursor-pointer select-none"
+                className="flex items-center gap-2 px-4 py-2 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full cursor-pointer select-none transition"
               >
-                {user.username}
+                <span>{user.username}</span>
               </div>
+
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-xl py-2 z-50">
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setIsUserMenuOpen(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={async () => {
-                      await supabase.auth.signOut();
-                      setIsUserMenuOpen(false);
-                      router.push("/");
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                  >
-                    exit
-                  </button>
+                <div className="absolute right-0 mt-2 w-72 bg-white shadow-xl rounded-xl p-3 z-50">
+                  <div className="flex items-start gap-3 pb-3 border-b border-gray-100">
+                    <div className="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center shrink-0">
+                      <CgProfile size={24} className="text-purple-600" />
+                    </div>
+
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="font-semibold text-gray-800 whitespace-nowrap overflow-hidden text-ellipsis">
+                        {user.username}
+                      </span>
+                      <span className="text-sm text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">
+                        {user.email}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className="ml-auto text-[#644FC1] hover:text-[#644FC1] p-1 shrink-0"
+                    >
+                      <HiX size={20} />
+                    </button>
+                  </div>
+
+                  <nav className="pt-3 flex flex-col gap-1">
+                    <MenuItem
+                      icon={<CgProfile size={20} className="text-gray-600" />}
+                      label="My profile"
+                      href={`/dashboard/dashboard/${user.id}`}
+                      onClick={() => setIsUserMenuOpen(false)}
+                    />
+
+                    <div className="flex justify-between items-center py-2 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-6 flex items-center justify-center">
+                          <BiBriefcase size={20} className="text-gray-600" />
+                        </div>
+                        <span className="text-gray-700 font-medium whitespace-nowrap overflow-hidden text-ellipsis block min-w-0">
+                          My brands and organisations
+                        </span>
+                      </div>
+                      <div className="text-gray-400 font-bold text-lg leading-none border border-gray-300 rounded-full w-6 h-6 flex items-center justify-center">
+                        +
+                      </div>
+                    </div>
+
+                    <Link
+                      href="#"
+                      className="flex items-center gap-3 pl-12 py-1 text-sm text-purple-600 cursor-pointer hover:bg-purple-50 rounded-lg transition"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <div className="w-5 h-5 flex items-center justify-center rounded-full bg-purple-100 font-bold text-xs">
+                        W
+                      </div>
+                      <span className="font-medium">Wish work</span>
+                    </Link>
+
+                    <MenuItem
+                      icon={
+                        <IoSettingsOutline
+                          size={20}
+                          className="text-gray-600"
+                        />
+                      }
+                      label="Setting"
+                      href="/settings"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    />
+
+                    <MenuItem
+                      icon={<TbLogout size={20} className="text-gray-600" />}
+                      label="Log out"
+                      onClick={handleLogout}
+                      isLogout={true}
+                    />
+                  </nav>
                 </div>
               )}
             </div>

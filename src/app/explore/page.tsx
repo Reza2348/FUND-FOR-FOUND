@@ -9,7 +9,6 @@ const Explore: React.FC = () => {
 
   return (
     <div className="max-w-[1280px] mx-auto mt-6 flex flex-col gap-10 px-4 pr-4">
-      {/* 🔍 Search Header */}
       <div className="w-full bg-[#2D14B1] text-white rounded-2xl flex flex-col items-center py-10 px-6 relative">
         <div className="relative w-full sm:w-96 md:w-[500px]">
           <HiSearch

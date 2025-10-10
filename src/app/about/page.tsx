@@ -6,15 +6,16 @@ const About = () => {
           About Us
         </h1>
         <p className="text-gray-600 mt-4 sm:mt-5 leading-relaxed text-sm sm:text-base md:text-lg">
-          Introducing <span className="font-semibold">"MixMaster"</span>, the
-          ultimate party sidekick app that fetches cocktails from the hilarious
-          Cocktails DB API. With a flick of your finger, you'll unlock a
-          treasure trove of enchanting drink recipes that'll make your taste
-          buds dance and your friends jump with joy.
+          Introducing: We are a fundraising app for your ideas. Our platform
+          helps you share your projects with the world, connect with supporters,
+          and grow your vision. Collaborate with like-minded individuals and
+          organizations, manage contributions easily, and track your progress in
+          real-time. Together, we turn creative ideas into impactful actions.
         </p>
         <p className="text-gray-600 mt-3 leading-relaxed text-sm sm:text-base md:text-lg">
-          Get ready to shake up your mixology game, one fantastical mocktail at
-          a time, and let the laughter and giggles flow!
+          Get ready to elevate your mixology game, crafting fantastical
+          mocktails one sip at a time. Let the laughter, joy, and good vibes
+          flow freely!
         </p>
       </div>
     </div>
