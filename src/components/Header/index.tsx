@@ -22,6 +22,15 @@ interface NavLink {
   label: string;
 }
 
+// --- ✅ FIX: تعریف ثابت خارج از کامپوننت برای پایداری وابستگی ---
+const NAV_LINKS: NavLink[] = [
+  { href: "/", label: "Home" },
+  { href: "/explore", label: "Explore" },
+  { href: "/about", label: "About us" },
+  { href: "/help", label: "Help & Support" },
+];
+// -----------------------------------------------------------------
+
 const MenuItem: React.FC<{
   icon: React.ReactNode;
   label: string;
@@ -60,29 +69,27 @@ const Header: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (pathname?.startsWith("/auth")) return null;
-
+  // --- هوک‌ها ---
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [activeLink, setActiveLink] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState<boolean>(false);
+
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const searchBarRef = useRef<HTMLDivElement | null>(null);
 
-  const navLinks: NavLink[] = [
-    { href: "/", label: "Home" },
-    { href: "/explore", label: "Explore" },
-    { href: "/about", label: "About us" },
-    { href: "/help", label: "Help & Support" },
-  ];
+  // ❌ حذف تعریف navLinks از اینجا
+
+  // --- useEffect ها ---
 
   useEffect(() => {
     const currentPath = pathname || "/";
     let foundActiveLink = "";
 
-    const sortedLinks = [...navLinks].sort(
+    // ✅ استفاده از NAV_LINKS ثابت
+    const sortedLinks = [...NAV_LINKS].sort(
       (a, b) => b.href.length - a.href.length
     );
 
@@ -101,6 +108,7 @@ const Header: React.FC = () => {
     } else {
       setActiveLink("");
     }
+    // ✅ حذف navLinks از آرایه وابستگی: اکنون فقط pathname باقی مانده است
   }, [pathname]);
 
   useEffect(() => {
@@ -195,6 +203,9 @@ const Header: React.FC = () => {
     }
   };
 
+  // --- بازگشت شرطی در انتها ---
+  if (pathname?.startsWith("/auth")) return null;
+
   return (
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
@@ -210,8 +221,9 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
+        {/* ✅ استفاده از NAV_LINKS */}
         <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10 lg:ml-[106px]">
-          {navLinks.map((link) => (
+          {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -421,7 +433,8 @@ const Header: React.FC = () => {
           </div>
 
           <nav className="flex flex-col gap-1 border-b border-gray-200 pb-8">
-            {navLinks.map((link) => (
+            {/* ✅ استفاده از NAV_LINKS */}
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

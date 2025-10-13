@@ -75,9 +75,6 @@ export default function DashboardPage() {
     [activeSection]
   );
 
-  const currentSectionLabel =
-    sections.find((sec) => sec.id === activeSection)?.label || "Dashboard";
-
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <div className="md:hidden p-4  shadow  bg-[#EDE9FE]">
