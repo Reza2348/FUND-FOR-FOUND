@@ -1,40 +1,46 @@
-// middleware.ts
-import { NextResponse, type NextRequest } from "next/server";
-import { updateSession } from "./src/lib/supabase/middleware";
+import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 
-export async function middleware(request: NextRequest) {
-  const loginUrl = new URL("/auth/login", request.url);
-  const dashboardPath = "/dashboard";
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            req.cookies.set(name, value)
+          );
+        },
+      },
+    }
+  );
 
-  const { supabase, response } = await updateSession(request);
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const loginUrl = new URL("/auth/login", req.url);
+  const dashboardPath = "/dashboard";
+  const publicProfilePath = "/dashboard/public-profile";
+
   // ۱. کاربر لاگین نکرده → /dashboard → هدایت به /auth/login
-  if (request.nextUrl.pathname === dashboardPath && !user) {
+  if (req.nextUrl.pathname.startsWith(dashboardPath) && !user) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // ۲. کاربر لاگین کرده → /dashboard → هدایت به public-profile
-  if (request.nextUrl.pathname === dashboardPath && user) {
-    return NextResponse.redirect(
-      new URL("/dashboard/public-profile", request.url)
-    );
+  // ۲. کاربر لاگین کرده → /auth/login → هدایت به public-profile
+  if (req.nextUrl.pathname === "/auth/login" && user) {
+    return NextResponse.redirect(publicProfilePath);
   }
 
-  // ۳. کاربر لاگین کرده → /auth/login → هدایت به public-profile
-  if (request.nextUrl.pathname === "/auth/login" && user) {
-    return NextResponse.redirect(
-      new URL("/dashboard/public-profile", request.url)
-    );
-  }
-
-  // سایر مسیرها → اجازه عبور
-  return response;
+  return res;
 }
 
-// مسیرهایی که middleware روی آن‌ها اجرا می‌شود
 export const config = {
   matcher: ["/dashboard/:path*", "/auth/login"],
 };
