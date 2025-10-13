@@ -67,7 +67,6 @@ export default function SignUpPage() {
         router.push("/");
       }, 1500);
     } catch (err) {
-      // ✅ FIX: Removed 'any' and added type check for the error object (Line 69)
       console.error("Signup error:", err);
       if (err instanceof Error) {
         toast.error(err.message);

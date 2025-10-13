@@ -5,10 +5,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { IoBriefcaseOutline } from "react-icons/io5";
 import Link from "next/link";
-import { User } from "@supabase/supabase-js"; // Import the User type from Supabase
+import { User } from "@supabase/supabase-js";
 
 export default function Home() {
-  // ✅ FIX: Replaced 'any' with the specific User type from Supabase (Line 11)
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,8 +29,6 @@ export default function Home() {
     );
 
     return () => {
-      // Listener will only be undefined if the initial call failed, which is handled gracefully by Supabase's auth implementation.
-      // We check for existence before unsubscribing to avoid runtime errors in some Next.js environments.
       listener?.subscription.unsubscribe();
     };
   }, []);
@@ -57,7 +54,6 @@ export default function Home() {
         Create your profile and take the first step towards new opportunities
       </h1>
       <p className="text-[#717171] max-w-xl mb-8">
-        {/* ✅ FIX: Replaced ' with &apos; (Line 56 & 59) */}
         By creating your account, you&apos;ll gain access to a thriving
         community where brands and individuals are committed to offering you
         ongoing support. This support network will empower you with the
@@ -87,7 +83,6 @@ export default function Home() {
           </h2>
 
           <p className="text-sm text-gray-600 mb-6 px-2 sm:px-4 leading-relaxed">
-            {/* ✅ FIX: Replaced ' with &apos; (Line 85) */}
             If your brand is established and you&apos;re looking for continuous
             support, get started now.
           </p>

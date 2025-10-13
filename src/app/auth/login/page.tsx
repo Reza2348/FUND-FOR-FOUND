@@ -15,7 +15,6 @@ const ToastContainer = dynamic(
   { ssr: false }
 );
 
-// Define the schema for login form data
 const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email"),
@@ -48,13 +47,11 @@ export default function LoginPage() {
       if (error) throw error;
       if (!loginData.user) throw new Error("User not found");
 
-      // NOTE: In a production environment, prefer secure server-side session handling or Firebase/Supabase persistence over localStorage.
       localStorage.setItem("user", JSON.stringify(loginData.user));
       localStorage.setItem("session", JSON.stringify(loginData.session));
       toast.success(`Login successful! Welcome ${username}`);
       setTimeout(() => router.push("/"), 1000);
     } catch (err) {
-      // ✅ FIX: Removed 'any' and added type check for the error object (Line 55)
       if (err instanceof Error) {
         toast.error(err.message);
       } else {
@@ -121,7 +118,6 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center mt-4 text-sm">
-          {/* ✅ FIX: Replaced ' with &apos; (Line 118) */}
           Don&apos;t have an account?
           <Link
             href="/auth/signup"
