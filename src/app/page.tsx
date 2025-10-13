@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { IoBriefcaseOutline } from "react-icons/io5";
 import Link from "next/link";
+import { User } from "@supabase/supabase-js"; // Import the User type from Supabase
 
 export default function Home() {
+  // ✅ FIX: Replaced 'any' with the specific User type from Supabase (Line 11)
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +30,9 @@ export default function Home() {
     );
 
     return () => {
-      listener.subscription.unsubscribe();
+      // Listener will only be undefined if the initial call failed, which is handled gracefully by Supabase's auth implementation.
+      // We check for existence before unsubscribing to avoid runtime errors in some Next.js environments.
+      listener?.subscription.unsubscribe();
     };
   }, []);
 
@@ -53,20 +57,21 @@ export default function Home() {
         Create your profile and take the first step towards new opportunities
       </h1>
       <p className="text-[#717171] max-w-xl mb-8">
-        By creating your account, you'll gain access to a thriving community
-        where brands and individuals are committed to offering you ongoing
-        support. This support network will empower you with the resources,
-        guidance, and connections you need to succeed, ensuring that you're
-        never alone on your journey.
+        {/* ✅ FIX: Replaced ' with &apos; (Line 56 & 59) */}
+        By creating your account, you&apos;ll gain access to a thriving
+        community where brands and individuals are committed to offering you
+        ongoing support. This support network will empower you with the
+        resources, guidance, and connections you need to succeed, ensuring that
+        you&apos;re never alone on your journey.
       </p>
 
       <div
         className="
-  w-full max-w-[319px] h-auto min-h-[459px]
-  border border-gray-300 text-[#644FC1]
-  rounded-md shadow-sm p-6 sm:p-8
-  flex flex-col items-center justify-between text-center bg-white mx-auto
-  transition-all duration-300
+ w-full max-w-[319px] h-auto min-h-[459px]
+ border border-gray-300 text-[#644FC1]
+ rounded-md shadow-sm p-6 sm:p-8
+ flex flex-col items-center justify-between text-center bg-white mx-auto
+ transition-all duration-300
 "
       >
         <div className="flex flex-col items-center">
@@ -82,7 +87,8 @@ export default function Home() {
           </h2>
 
           <p className="text-sm text-gray-600 mb-6 px-2 sm:px-4 leading-relaxed">
-            If your brand is established and you're looking for continuous
+            {/* ✅ FIX: Replaced ' with &apos; (Line 85) */}
+            If your brand is established and you&apos;re looking for continuous
             support, get started now.
           </p>
         </div>

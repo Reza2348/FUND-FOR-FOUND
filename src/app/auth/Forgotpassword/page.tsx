@@ -40,8 +40,14 @@ export default function ResetPassword() {
 
       toast.success("Your password has been changed successfully!");
       setTimeout(() => router.push("/auth/login"), 1500);
-    } catch (err: any) {
-      toast.error(err.message || "An unknown error occurred.");
+    } catch (err) {
+      // ✅ FIX: رفع خطای 'Unexpected any' با بررسی نوع خطا
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        // برای خطاهایی که از نوع Error نیستند (مثلاً رشته یا شیء نامشخص)
+        toast.error("An unknown error occurred.");
+      }
     }
   };
 

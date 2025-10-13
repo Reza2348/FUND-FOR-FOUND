@@ -66,9 +66,14 @@ export default function SignUpPage() {
       setTimeout(() => {
         router.push("/");
       }, 1500);
-    } catch (err: any) {
+    } catch (err) {
+      // ✅ FIX: Removed 'any' and added type check for the error object (Line 69)
       console.error("Signup error:", err);
-      toast.error(err.message || "خطای ناشناخته رخ داد");
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("خطای ناشناخته رخ داد");
+      }
     }
   };
 
