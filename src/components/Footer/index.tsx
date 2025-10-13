@@ -21,7 +21,7 @@ const FOOTER_NAV: FooterSection[] = [
   {
     title: "ABOUT",
     links: [
-      { name: "About Us", href: "#" },
+      { name: "AboutUs", href: "/about" },
       { name: "Contact Us", href: "#" },
     ],
   },
