@@ -1,6 +1,5 @@
-// src/lib/supabase/middleware.ts
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient, type CookieOptions } from "@supabase/ssr"; // یا sdk ای که استفاده می‌کنی
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
 export async function updateSession(request: NextRequest) {
   const response = NextResponse.next();
