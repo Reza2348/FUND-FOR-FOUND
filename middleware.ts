@@ -24,7 +24,7 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const loginUrl = new URL("/auth/login", req.url);
+  const loginUrl = new URL("/dashboard", req.url);
   const dashboardPath = "/dashboard";
   const publicProfilePath = "/dashboard/public-profile";
 
@@ -34,7 +34,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // ۲. کاربر لاگین کرده → /auth/login → هدایت به public-profile
-  if (req.nextUrl.pathname === "/auth/login" && user) {
+  if (req.nextUrl.pathname === "/dashboard" && user) {
     return NextResponse.redirect(publicProfilePath);
   }
 
@@ -42,5 +42,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/login"],
+  matcher: ["/dashboard/:path*", ""],
 };
