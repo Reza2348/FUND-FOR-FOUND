@@ -68,11 +68,9 @@ export default function SignUpPage() {
       }, 1500);
     } catch (err) {
       console.error("Signup error:", err);
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error("خطای ناشناخته رخ داد");
-      }
+      const errorMessage =
+        err instanceof Error ? err.message : "خطای ناشناخته رخ داد";
+      toast.error(errorMessage);
     }
   };
 

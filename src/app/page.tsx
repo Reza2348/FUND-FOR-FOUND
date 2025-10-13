@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { IoBriefcaseOutline } from "react-icons/io5";
 import Link from "next/link";
+
 import { User } from "@supabase/supabase-js";
 
 export default function Home() {
@@ -29,7 +30,7 @@ export default function Home() {
     );
 
     return () => {
-      listener?.subscription.unsubscribe();
+      listener.subscription.unsubscribe();
     };
   }, []);
 

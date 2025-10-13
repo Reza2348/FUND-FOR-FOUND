@@ -15,6 +15,7 @@ const ToastContainer = dynamic(
   { ssr: false }
 );
 
+// اضافه کردن username به schema
 const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email"),
@@ -52,11 +53,9 @@ export default function LoginPage() {
       toast.success(`Login successful! Welcome ${username}`);
       setTimeout(() => router.push("/"), 1000);
     } catch (err) {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error("An unexpected error occurred.");
-      }
+      const errorMessage =
+        err instanceof Error ? err.message : "Unexpected error occurred";
+      toast.error(errorMessage);
     }
   };
 

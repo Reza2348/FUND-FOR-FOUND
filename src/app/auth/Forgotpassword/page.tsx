@@ -41,11 +41,10 @@ export default function ResetPassword() {
       toast.success("Your password has been changed successfully!");
       setTimeout(() => router.push("/auth/login"), 1500);
     } catch (err) {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error("An unknown error occurred.");
-      }
+      const errorMessage =
+        err instanceof Error ? err.message : "An unknown error occurred.";
+
+      toast.error(errorMessage);
     }
   };
 
