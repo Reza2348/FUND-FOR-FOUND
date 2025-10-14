@@ -1,17 +1,40 @@
 "use client";
+import React, { useCallback, ElementType } from "react";
 import Link from "next/link";
-import { useState, useCallback } from "react";
-import { IoClose } from "react-icons/io5";
+import { usePathname } from "next/navigation";
+import { IoMdClose } from "react-icons/io";
+import { HiArrowRight } from "react-icons/hi";
 import { FaGear } from "react-icons/fa6";
+import ProfileCard from "../ProfileCard/ProfileCard";
 
+// 🎨 رنگ‌ها و ثابت‌ها
+const PURPLE_MAIN = "#644FC1";
+const PURPLE_LIGHT = "#F3F0FF";
+const PURPLE_BUTTON_BORDER = "#5746AF";
+const PURPLE_BUTTON_BG = "#EDE9FE";
+
+// 🟢 تعریف رابط Props که از والد (Layout) می‌آید
+interface SidebarProps {
+  sidebarOpen: boolean;
+  // نوع صحیح برای تابع set state
+  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 interface Section {
   id: string;
   label: string;
   hasArrow?: boolean;
+  labelMobile?: string;
+  iconMobile?: ElementType;
 }
 
 const sections: Section[] = [
-  { id: "public-profile", label: "Public profile", hasArrow: true },
+  {
+    id: "public-profile",
+    label: "Public profile",
+    labelMobile: "Setting",
+    iconMobile: FaGear,
+    hasArrow: true,
+  },
   { id: "info", label: "Info" },
   { id: "contribution-tiers", label: "Contribution tiers" },
   { id: "about", label: "About" },
@@ -21,99 +44,149 @@ const sections: Section[] = [
   { id: "pay-out", label: "Pay out" },
 ];
 
-export default function DashboardPage() {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-  const [activeSection, setActiveSection] = useState<string>("public-profile");
+// 🟢 پذیرش Props از Layout
+export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const pathname = usePathname();
+  const activeSection = pathname.split("/").pop() || sections[0].id;
 
   const renderLink = useCallback(
     (sec: Section) => {
-      const isActive = sec.id === activeSection;
+      const isActive: boolean = sec.id === activeSection;
 
-      let className =
-        "flex justify-between items-center text-gray-700 hover:text-[#644FC1] py-2 px-3 rounded-lg cursor-pointer transition-colors duration-150";
+      let className: string = `
+          flex justify-between items-center py-2 px-3 rounded-lg cursor-pointer transition-colors duration-150
+          text-gray-700 hover:text-[${PURPLE_MAIN}]
+        `;
 
       if (isActive) {
-        className =
-          "flex justify-between items-center bg-[#F3F0FF] text-[#644FC1] font-medium py-2 px-3 rounded-lg cursor-pointer";
+        className = `
+            flex justify-between items-center py-2 px-3 rounded-lg cursor-pointer
+            bg-[${PURPLE_LIGHT}] text-[${PURPLE_MAIN}] font-medium
+          `;
       }
+
+      const IconComponent = sec.iconMobile;
 
       return (
         <Link
           key={sec.id}
           href={`/dashboard/${sec.id}`}
           onClick={() => {
-            setActiveSection(sec.id);
-            setSidebarOpen(false);
+            if (typeof window !== "undefined" && window.innerWidth < 768) {
+              setSidebarOpen(false);
+            }
           }}
-          className={className}
+          className={className.replace(/\s+/g, " ").trim()}
         >
-          <span className={isActive ? "text-[#644FC1]" : "text-gray-700"}>
-            {sec.label}
+          <span
+            className={`flex items-center gap-2 ${
+              isActive ? `text-[${PURPLE_MAIN}]` : "text-gray-700"
+            }`}
+          >
+            {IconComponent && (
+              <span className="md:hidden">
+                <FaGear size={16} className="text-[#644FC1]" />
+              </span>
+            )}
+
+            {sec.labelMobile ? (
+              <>
+                <span className="hidden md:inline">{sec.label}</span>
+                <span className="md:hidden">{sec.labelMobile}</span>
+              </>
+            ) : (
+              <span>{sec.label}</span>
+            )}
           </span>
 
           {sec.hasArrow && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
+            <HiArrowRight
               className={`h-4 w-4 ${
-                isActive ? "text-[#644FC1]" : "text-gray-400"
+                isActive ? `text-[${PURPLE_MAIN}]` : "text-gray-400"
               }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            />
           )}
         </Link>
       );
     },
-    [activeSection]
+    [activeSection, setSidebarOpen]
   );
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-      <div className="md:hidden p-4  shadow  bg-[#EDE9FE]">
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="text-[#644FC1] font-bold"
-        >
-          <FaGear />
-        </button>
-      </div>
-
+    <>
+      {/* 🟢 بخش موبایل منتقل شده از layout */}
       <div
         className={`
-
-          fixed top-0 left-0 h-full w-64 bg-white shadow-lg p-6 space-y-1 transform transition-transform duration-300 z-50
-
-
-          md:relative 
-          md:mt-4 md:ml-4 md:mb-4 
-          md:h-[calc(100vh-2rem)] 
-          md:rounded-xl 
-          
-          ${
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0
+          md:hidden 
+          flex items-center justify-between 
+          p-4 
+          w-full /* max-w-xs و mx-auto حذف شدند */
         `}
       >
-        <div className="flex items-center justify-between mb-4 pt-2 border-b border-gray-400 pb-2 md:border-b-0">
-          <h1 className="text-[#644FC1] text-lg font-bold">FUND FOR FOUND</h1>
+        {/* 💡 دکمه باز کردن سایدبار - (حالا در سمت چپ) */}
+        <div
+          className={`
+            flex items-center justify-center 
+            border-l-8 border-[#5746AF] 
+            rounded-md 
+            mt-1 
+            p-4 
+            bg-[#EDE9FE] 
+            shadow 
+          `}
+        >
           <button
-            onClick={() => setSidebarOpen(false)}
-            className="text-gray-500 hover:text-gray-700"
-            aria-label="Close sidebar"
+            onClick={() => setSidebarOpen(true)}
+            style={{ color: PURPLE_MAIN }}
+            className={`text-[${PURPLE_MAIN}] font-bold`}
+            aria-label="Open sidebar"
           >
-            <IoClose size={24} />
+            <FaGear size={20} />
           </button>
         </div>
-        <div className="space-y-1">{sections.map(renderLink)}</div>
+
+        {/* 💡 کانتینر ProfileCard - (حالا در سمت راست) */}
+        <div className="flex-1 ml-2">
+          {" "}
+          {/* ml-2 اضافه شد تا فاصله ایجاد شود */}
+          <ProfileCard />
+        </div>
       </div>
-    </div>
+      {/* 🔴 پایان بخش موبایل منتقل شده */}
+
+      {/* 🟢 کانتینر اصلی سایدبار */}
+      <div
+        className={`
+            fixed top-0 left-0 h-full w-64 bg-white shadow-xl p-6 space-y-1 transform transition-transform duration-300 z-50
+            ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+            md:relative 
+            md:shadow-xl 
+            md:mt-4 md:ml-4 
+            md:w-64 md:h-fit
+            md:rounded-xl 
+            md:p-6 
+            md:translate-x-0 
+          `}
+      >
+        {/* محتوای داخلی سایدبار */}
+        <div className="flex justify-between items-center mb-4 pt-2">
+          <h1 className={`text-[${PURPLE_MAIN}] text-lg font-bold`}>
+            FUND FOR FOUND
+          </h1>
+          {/* دکمه بستن سایدبار در موبایل */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden text-gray-500"
+            aria-label="Close sidebar"
+          >
+            <IoMdClose size={24} className={`text-[${PURPLE_MAIN}]`} />
+          </button>
+        </div>
+        <div className="border-b border-gray-200 mb-[68px] md:hidden"></div>
+        <div className="space-y-1 border-l border-[#D7CFF9] pl-4 md:border-l-0 md:pl-0">
+          {sections.map(renderLink)}
+        </div>
+      </div>
+    </>
   );
 }

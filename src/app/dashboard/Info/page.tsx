@@ -181,7 +181,7 @@ export default function InfoPage() {
   );
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 lg:p-10 bg-white rounded-xl shadow-lg w-full max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 md:p-8 lg:p-10  w-full max-w-5xl mx-auto lg:ml-[12px] lg:mt-[12px]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b pb-4">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800">

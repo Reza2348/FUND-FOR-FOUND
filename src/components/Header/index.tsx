@@ -22,14 +22,12 @@ interface NavLink {
   label: string;
 }
 
-// --- ✅ FIX: تعریف ثابت خارج از کامپوننت برای پایداری وابستگی ---
 const NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/explore", label: "Explore" },
   { href: "/about", label: "About us" },
   { href: "/help", label: "Help & Support" },
 ];
-// -----------------------------------------------------------------
 
 const MenuItem: React.FC<{
   icon: React.ReactNode;
@@ -68,8 +66,6 @@ const MenuItem: React.FC<{
 const Header: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-
-  // --- هوک‌ها ---
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [activeLink, setActiveLink] = useState<string>("");
@@ -80,15 +76,9 @@ const Header: React.FC = () => {
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const searchBarRef = useRef<HTMLDivElement | null>(null);
 
-  // ❌ حذف تعریف navLinks از اینجا
-
-  // --- useEffect ها ---
-
   useEffect(() => {
     const currentPath = pathname || "/";
     let foundActiveLink = "";
-
-    // ✅ استفاده از NAV_LINKS ثابت
     const sortedLinks = [...NAV_LINKS].sort(
       (a, b) => b.href.length - a.href.length
     );
@@ -108,7 +98,6 @@ const Header: React.FC = () => {
     } else {
       setActiveLink("");
     }
-    // ✅ حذف navLinks از آرایه وابستگی: اکنون فقط pathname باقی مانده است
   }, [pathname]);
 
   useEffect(() => {
@@ -203,7 +192,6 @@ const Header: React.FC = () => {
     }
   };
 
-  // --- بازگشت شرطی در انتها ---
   if (pathname?.startsWith("/auth")) return null;
 
   return (
@@ -221,7 +209,6 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        {/* ✅ استفاده از NAV_LINKS */}
         <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10 lg:ml-[106px]">
           {NAV_LINKS.map((link) => (
             <Link
@@ -433,7 +420,6 @@ const Header: React.FC = () => {
           </div>
 
           <nav className="flex flex-col gap-1 border-b border-gray-200 pb-8">
-            {/* ✅ استفاده از NAV_LINKS */}
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}

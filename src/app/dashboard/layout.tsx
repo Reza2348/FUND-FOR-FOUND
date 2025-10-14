@@ -1,18 +1,23 @@
+// app/dashboard/layout.tsx
+"use client";
+import React, { PropsWithChildren, useState } from "react";
 import Sidebar from "@/components/Sidebar/Sidebar";
-import React, { PropsWithChildren } from "react";
 
-export const metadata = {
-  title: "Dashboard - Fund For Found",
-};
+export default function DashboardLayout({ children }: PropsWithChildren) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-const DashboardLayout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="flex">
-      <Sidebar />
-
-      <main className="px-6 py-8">{children}</main>
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <main
+        className={`
+            
+        
+                `}
+        onClick={() => sidebarOpen && setSidebarOpen(false)}
+      >
+        {children}
+      </main>
     </div>
   );
-};
-
-export default DashboardLayout;
+}
