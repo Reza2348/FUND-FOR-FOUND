@@ -114,16 +114,16 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
 
   return (
     <>
-      {/* 🟢 بخش موبایل منتقل شده از layout */}
       <div
         className={`
           md:hidden 
           flex items-center justify-between 
-          p-4 
-          w-full /* max-w-xs و mx-auto حذف شدند */
+          p-4  
+            pr-[56px]
+             pl-0
+          w-full
         `}
       >
-        {/* 💡 دکمه باز کردن سایدبار - (حالا در سمت چپ) */}
         <div
           className={`
             flex items-center justify-center 
@@ -145,16 +145,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           </button>
         </div>
 
-        {/* 💡 کانتینر ProfileCard - (حالا در سمت راست) */}
         <div className="flex-1 ml-2">
-          {" "}
-          {/* ml-2 اضافه شد تا فاصله ایجاد شود */}
           <ProfileCard />
         </div>
       </div>
-      {/* 🔴 پایان بخش موبایل منتقل شده */}
 
-      {/* 🟢 کانتینر اصلی سایدبار */}
       <div
         className={`
             fixed top-0 left-0 h-full w-64 bg-white shadow-xl p-6 space-y-1 transform transition-transform duration-300 z-50
@@ -168,12 +163,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
             md:translate-x-0 
           `}
       >
-        {/* محتوای داخلی سایدبار */}
         <div className="flex justify-between items-center mb-4 pt-2">
           <h1 className={`text-[${PURPLE_MAIN}] text-lg font-bold`}>
             FUND FOR FOUND
           </h1>
-          {/* دکمه بستن سایدبار در موبایل */}
           <button
             onClick={() => setSidebarOpen(false)}
             className="md:hidden text-gray-500"

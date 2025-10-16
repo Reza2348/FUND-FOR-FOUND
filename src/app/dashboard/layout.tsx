@@ -9,13 +9,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <main
-        className={`
-            
-        
-                `}
-        onClick={() => sidebarOpen && setSidebarOpen(false)}
-      >
+      <main onClick={() => sidebarOpen && setSidebarOpen(false)}>
         {children}
       </main>
     </div>
