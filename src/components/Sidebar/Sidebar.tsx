@@ -44,7 +44,6 @@ const sections: Section[] = [
   { id: "pay-out", label: "Pay out" },
 ];
 
-// 🟢 پذیرش Props از Layout
 export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const pathname = usePathname();
   const activeSection = pathname.split("/").pop() || sections[0].id;

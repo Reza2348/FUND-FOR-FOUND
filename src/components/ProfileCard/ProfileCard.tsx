@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { HiArrowRight } from "react-icons/hi"; // 💡 برای پیکان سمت راست
+import { HiArrowRight } from "react-icons/hi";
 
 const PURPLE_MAIN = "#644FC1";
 
@@ -27,8 +27,6 @@ export default function ProfileCard() {
           <p className="text-sm text-gray-500 truncate">shirani@wishwork.org</p>
         </div>
       </div>
-
-      {/* 🟢 پیکان (سمت راست) */}
       <HiArrowRight className="h-5 w-5 text-gray-400" />
     </div>
   );
