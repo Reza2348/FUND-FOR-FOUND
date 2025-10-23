@@ -7,16 +7,11 @@ import { HiArrowRight } from "react-icons/hi";
 import { FaGear } from "react-icons/fa6";
 import ProfileCard from "../ProfileCard/ProfileCard";
 
-// 🎨 رنگ‌ها و ثابت‌ها
 const PURPLE_MAIN = "#644FC1";
 const PURPLE_LIGHT = "#F3F0FF";
-const PURPLE_BUTTON_BORDER = "#5746AF";
-const PURPLE_BUTTON_BG = "#EDE9FE";
 
-// 🟢 تعریف رابط Props که از والد (Layout) می‌آید
 interface SidebarProps {
   sidebarOpen: boolean;
-  // نوع صحیح برای تابع set state
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 interface Section {
@@ -125,6 +120,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       >
         <div
           className={`
+             ml-[11px]
             flex items-center justify-center 
             border-l-8 border-[#5746AF] 
             rounded-md 
