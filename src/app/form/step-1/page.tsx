@@ -1,13 +1,10 @@
 "use client";
 
-import Link from "next/link";
-// ⬅️ ایمپورت کردن useRouter
 import { useRouter } from "next/navigation";
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { FaTimes } from "react-icons/fa"; // Icon for removing tags
-import { BsChevronDown } from "react-icons/bs"; // Icon for dropdown indicator
+import { FaTimes } from "react-icons/fa";
+import { BsChevronDown } from "react-icons/bs";
 
-// لیست تگ‌های پیشنهادی موجود برای انتخاب
 const AVAILABLE_TAGS = [
   "Web design",
   "Software",
@@ -23,85 +20,119 @@ const AVAILABLE_TAGS = [
 ];
 
 export default function StepOnePage() {
-  const router = useRouter(); // ⬅️ فراخوانی hook برای دسترسی به روتر
+  const router = useRouter();
 
-  const [brandName, setBrandName] = useState("");
-  const [country, setCountry] = useState("");
-  const [category, setCategory] = useState("");
-  const [subCategory, setSubCategory] = useState("");
+  const [formData, setFormData] = useState({
+    brandName: "",
+    country: "",
+    category: "",
+    subCategory: "",
+    tags: ["Product design"],
+    agreed: false,
+  });
+
   const [tagInput, setTagInput] = useState("");
-  const [tags, setTags] = useState(["Product design"]); // Initial tags
-  const [agreed, setAgreed] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // وضعیت باز بودن Dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isSubCategoryOpen, setIsSubCategoryOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // ⬅️ منطق فیلتر کردن لیست پیشنهادی
+  const handleFormChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value, type } = e.target;
+      const checked = (e.target as HTMLInputElement).checked;
+
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+
+      if (e.target.tagName === "SELECT") {
+        switch (name) {
+          case "country":
+            setIsCountryOpen(false);
+            break;
+          case "category":
+            setIsCategoryOpen(false);
+            break;
+          case "subCategory":
+            setIsSubCategoryOpen(false);
+            break;
+          default:
+            break;
+        }
+      }
+    },
+    []
+  );
+
   const filteredSuggestions = AVAILABLE_TAGS.filter(
     (tag) =>
-      // تگ‌هایی که قبلاً انتخاب نشده‌اند
-      !tags.includes(tag) &&
-      // شامل متن ورودی هستند یا Dropdown باز است (اگر متن خالی باشد، همه تگ‌ها را نشان بده)
+      !formData.tags.includes(tag) &&
       (tagInput.length === 0 ||
         tag.toLowerCase().includes(tagInput.toLowerCase()))
-  ).slice(0, 8); // محدود کردن تعداد نمایش
+  ).slice(0, 8);
 
-  // تابع اضافه کردن تگ (هم برای Enter و هم برای کلیک روی پیشنهاد)
   const addTag = useCallback(
     (tagText: string) => {
       const newTag = tagText.trim();
-      if (newTag && !tags.includes(newTag) && AVAILABLE_TAGS.includes(newTag)) {
-        // فقط تگ‌های موجود در لیست ثابت را اضافه می‌کنیم
-        setTags((prevTags) => [...prevTags, newTag]);
-        setTagInput(""); // ورودی را پاک می‌کند
-      } else if (
+      if (
         newTag &&
-        !tags.includes(newTag) &&
-        !AVAILABLE_TAGS.includes(newTag)
+        !formData.tags.includes(newTag) &&
+        AVAILABLE_TAGS.includes(newTag)
       ) {
-        // اگر اجازه نمی‌دهید:
-        console.log("Custom tags are not allowed or tag already exists.");
+        setFormData((prevData) => ({
+          ...prevData,
+          tags: [...prevData.tags, newTag],
+        }));
+        setTagInput("");
+      } else if (newTag && !AVAILABLE_TAGS.includes(newTag)) {
+        console.log("Custom tags are not allowed.");
         setTagInput("");
       }
     },
-    [tags]
+    [formData.tags]
   );
 
-  // هندلر کلیک روی یک تگ پیشنهادی
   const handleSuggestionClick = (tag: string) => {
     addTag(tag);
-    setIsDropdownOpen(false); // Dropdown را ببند
-    inputRef.current?.focus(); // فوکوس را به Input برگردان
+    setIsDropdownOpen(false);
+    inputRef.current?.focus();
   };
 
-  // هندلر کلید برای Enter (برای راحتی تایپ و جستجو)
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // اگر Enter زده شد
-    if (e.key === "Enter") {
-      e.preventDefault();
-      // اگر فقط یک پیشنهاد وجود دارد، آن را انتخاب کن
-      if (filteredSuggestions.length === 1) {
-        handleSuggestionClick(filteredSuggestions[0]);
-      } else {
-        // در غیر این صورت، کاری نکن تا فقط از لیست انتخاب شود
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+
+        if (filteredSuggestions.length === 1) {
+          handleSuggestionClick(filteredSuggestions[0]);
+        }
       }
-    }
 
-    // اگر Escape زده شد، Dropdown بسته شود
-    if (e.key === "Escape") {
-      setIsDropdownOpen(false);
-      inputRef.current?.blur();
-    }
-  };
+      if (e.key === "Escape") {
+        setIsDropdownOpen(false);
+        inputRef.current?.blur();
+      }
+    },
+    [filteredSuggestions, addTag]
+  );
 
-  // Handler to remove a tag
-  const removeTag = (tagToRemove: string) => {
-    setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
-    inputRef.current?.focus(); // فوکوس را حفظ کن
-  };
+  const removeTag = useCallback(
+    (tagToRemove: string) => {
+      setFormData((prevData) => ({
+        ...prevData,
+        tags: prevData.tags.filter((tag) => tag !== tagToRemove),
+      }));
+      inputRef.current?.focus();
+    },
+    [inputRef]
+  );
 
-  // بستن Dropdown با کلیک در خارج از کامپوننت
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -117,49 +148,37 @@ export default function StepOnePage() {
     };
   }, [containerRef]);
 
-  // ⬅️ تابع به‌روزرسانی شده ثبت فرم برای هدایت به step-2
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form data:", {
-      brandName,
-      country,
-      category,
-      subCategory,
-      tags,
-      agreed,
-    });
+  const handleBoxClick = useCallback(() => {
+    inputRef.current?.focus();
+  }, [inputRef]);
 
-    // هدایت به صفحه /form/step-2
-    router.push("/form/step-2");
-  };
-
-  // ⬅️ منطق باز و بسته شدن Dropdown
-  const handleBoxClick = () => {
-    setIsDropdownOpen((prev) => !prev);
-    if (!isDropdownOpen) {
-      inputRef.current?.focus();
-    }
-  };
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      console.log("Form data:", formData);
+      router.push("/form/step-2");
+    },
+    [formData, router]
+  );
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-      {/* Headings */}
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-1 sm:space-y-8 lg:w-fit justify-start lg:justify-center lg:mx-auto"
+    >
       <h2 className="text-xl font-semibold sm:text-2xl text-[#644FC1]">
         Basic info
       </h2>
-      <p className="text-[#505050] text-xl sm:text-2xl font-bold">
+      <p className="inline text-[#505050] lg:text-xl sm:text-2xl font-bold mt-3 mb-3">
         Tell about your Brand/organization
       </p>
 
-      {/* Description */}
       <p className="text-gray-600 text-sm">
         Provide an overview of the brand or organization you want to register on
         3F.
       </p>
 
-      {/* Grid for Brand Name & Country */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Brand/organisation name */}
         <div className="space-y-2">
           <label
             htmlFor="brandName"
@@ -170,14 +189,13 @@ export default function StepOnePage() {
           <input
             type="text"
             id="brandName"
-            value={brandName}
-            onChange={(e) => setBrandName(e.target.value)}
+            name="brandName"
+            value={formData.brandName}
+            onChange={handleFormChange}
             className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-[#644FC1] focus:border-[#644FC1] transition duration-150"
             required
           />
         </div>
-
-        {/* Country (Dropdown) */}
         <div className="space-y-2">
           <label
             htmlFor="country"
@@ -185,33 +203,49 @@ export default function StepOnePage() {
           >
             Country <span className="text-[#C91433]">*</span>
           </label>
-          <select
-            id="country"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-[#644FC1] focus:border-[#644FC1] transition duration-150 appearance-none bg-white"
-            required
+
+          <div
+            className="relative"
+            onFocus={() => setIsCountryOpen(true)}
+            onBlur={() => setIsCountryOpen(false)}
           >
-            <option value="" disabled>
-              Select a country
-            </option>
-            <option value="united states">United States</option>
-            <option value="canada">Canada</option>
-            <option value="italy">Italy</option>
-          </select>
+            <select
+              id="country"
+              name="country"
+              value={formData.country}
+              onChange={handleFormChange} // handleFormChange اکنون Select را می‌بندد
+              className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-[#644FC1] focus:border-[#644FC1] transition duration-150 appearance-none bg-white pr-10"
+              required
+            >
+              <option value="" disabled></option>
+              <option value="united states">United States</option>
+              <option value="canada">Canada</option>
+              <option value="italy">Italy</option>
+            </select>
+            <BsChevronDown
+              className={`
+                absolute 
+                top-1/2 
+                right-3 
+                -translate-y-1/2
+                w-4 h-4 
+                text-gray-400 
+                pointer-events-none 
+                transition-transform duration-200 
+                ${isCountryOpen ? "rotate-180" : "rotate-0"}
+              `}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Category Selection Description */}
-      <p className="text-gray-600 text-sm">
+      <p className="text-[#959595] text-sm mt-3 mb-3">
         Select the primary category that best describes your brand or
         organization. Then select the subcategory that <br /> further defines
         your brand or organization.
       </p>
 
-      {/* Category and Subcategory */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Category (Dropdown) */}
         <div className="space-y-2">
           <label
             htmlFor="category"
@@ -219,22 +253,39 @@ export default function StepOnePage() {
           >
             Category <span className="text-[#C91433]">*</span>
           </label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-[#644FC1] focus:border-[#644FC1] transition duration-150 appearance-none bg-white"
-            required
+          <div
+            className="relative"
+            onFocus={() => setIsCategoryOpen(true)}
+            onBlur={() => setIsCategoryOpen(false)}
           >
-            <option value="" disabled>
-              Select a category
-            </option>
-            <option value="software">Software</option>
-            <option value="web UI">Web UI</option>
-          </select>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleFormChange}
+              className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-[#644FC1] focus:border-[#644FC1] transition duration-150 appearance-none bg-white pr-10"
+              required
+            >
+              <option value="" disabled></option>
+              <option value="software">Software</option>
+              <option value="web UI">Web UI</option>
+            </select>
+            <BsChevronDown
+              className={`
+                absolute 
+                top-1/2 
+                right-3 
+                -translate-y-1/2
+                w-4 h-4 
+                text-gray-400 
+                pointer-events-none 
+                transition-transform duration-200 
+                ${isCategoryOpen ? "rotate-180" : "rotate-0"}
+              `}
+            />
+          </div>
         </div>
 
-        {/* Subcategory (Dropdown) */}
         <div className="space-y-2">
           <label
             htmlFor="subCategory"
@@ -242,23 +293,40 @@ export default function StepOnePage() {
           >
             Subcategory <span className="text-[#C91433]">*</span>
           </label>
-          <select
-            id="subCategory"
-            value={subCategory}
-            onChange={(e) => setSubCategory(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-[#644FC1] focus:border-[#644FC1] transition duration-150 appearance-none bg-white"
-            required
+          <div
+            className="relative"
+            onFocus={() => setIsSubCategoryOpen(true)}
+            onBlur={() => setIsSubCategoryOpen(false)}
           >
-            <option value="" disabled>
-              Select a subcategory
-            </option>
-            <option value="ui">UI Design</option>
-            <option value="ux">UX Design</option>
-          </select>
+            <select
+              id="subCategory"
+              name="subCategory"
+              value={formData.subCategory}
+              onChange={handleFormChange}
+              className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-[#644FC1] focus:border-[#644FC1] transition duration-150 appearance-none bg-white pr-10"
+              required
+            >
+              <option value="" disabled></option>
+              <option value="ui">UI Design</option>
+              <option value="ux">UX Design</option>
+            </select>
+            <BsChevronDown
+              className={`
+                absolute 
+                top-1/2 
+                right-3 
+                -translate-y-1/2
+                w-4 h-4 
+                text-gray-400 
+                pointer-events-none 
+                transition-transform duration-200 
+                ${isSubCategoryOpen ? "rotate-180" : "rotate-0"}
+              `}
+            />
+          </div>
         </div>
       </div>
 
-      {/* ⬅️ Brand Tags (Multi-select Input) */}
       <div className="space-y-2" ref={containerRef}>
         <label
           htmlFor="tags"
@@ -268,14 +336,12 @@ export default function StepOnePage() {
         </label>
 
         <div className="relative">
-          {/* Input Box and Tags Display */}
           <div
             className="flex items-center justify-between border border-gray-300 rounded-lg shadow-sm p-3 focus-within:ring-[#644FC1] focus-within:border-[#644FC1] transition duration-150 cursor-text"
-            onClick={handleBoxClick} // کلیک روی باکس برای باز/بسته کردن Dropdown
+            onClick={handleBoxClick} // اکنون فقط فوکوس را منتقل می‌کند
           >
             <div className="flex flex-wrap gap-2 flex-1">
-              {/* Display existing tags */}
-              {tags.map((tag) => (
+              {formData.tags.map((tag) => (
                 <span
                   key={tag}
                   className="flex items-center bg-[#644FC1] text-white text-xs font-medium px-3 py-1 rounded-full"
@@ -284,7 +350,7 @@ export default function StepOnePage() {
                   <button
                     type="button"
                     onClick={(e) => {
-                      e.stopPropagation(); // جلوگیری از بسته شدن Dropdown
+                      e.stopPropagation();
                       removeTag(tag);
                     }}
                     className="ml-2 hover:text-red-300 transition"
@@ -295,7 +361,6 @@ export default function StepOnePage() {
                 </span>
               ))}
 
-              {/* Tag Input Field (برای جستجو) */}
               <input
                 ref={inputRef}
                 type="text"
@@ -303,18 +368,17 @@ export default function StepOnePage() {
                 value={tagInput}
                 onChange={(e) => {
                   setTagInput(e.target.value);
-                  setIsDropdownOpen(true); // هنگام تایپ، Dropdown را باز کن
+                  setIsDropdownOpen(true);
                 }}
-                onFocus={() => setIsDropdownOpen(true)} // هنگام فوکوس، Dropdown را باز کن
+                onFocus={() => setIsDropdownOpen(true)}
                 onKeyDown={handleKeyDown}
                 className="bg-transparent focus:outline-none placeholder-gray-400 flex-1 min-w-[100px] py-1"
                 placeholder={
-                  tags.length === 0 ? "Select or search for tags" : ""
+                  formData.tags.length === 0 ? "Select or search for tags" : ""
                 }
               />
             </div>
 
-            {/* Icon Dropdown Indicator */}
             <BsChevronDown
               className={`w-4 h-4 text-gray-400 ml-3 transition-transform duration-200 ${
                 isDropdownOpen ? "rotate-180" : "rotate-0"
@@ -322,7 +386,6 @@ export default function StepOnePage() {
             />
           </div>
 
-          {/* ⬅️ لیست پیشنهادی که شبیه Dropdown باز می‌شود */}
           {isDropdownOpen && filteredSuggestions.length > 0 && (
             <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {filteredSuggestions.map((tag) => (
@@ -336,7 +399,7 @@ export default function StepOnePage() {
               ))}
             </div>
           )}
-          {/* پیام عدم وجود تگ در هنگام جستجو */}
+
           {isDropdownOpen &&
             tagInput.length > 0 &&
             filteredSuggestions.length === 0 && (
@@ -347,31 +410,30 @@ export default function StepOnePage() {
         </div>
       </div>
 
-      {/* Terms of Service Checkbox */}
       <div className="flex items-center pt-4">
         <input
           id="agree"
+          name="agreed"
           type="checkbox"
-          checked={agreed}
-          onChange={(e) => setAgreed(e.target.checked)}
+          checked={formData.agreed}
+          onChange={handleFormChange}
           className="h-4 w-4 text-[#644FC1] border-gray-300 rounded focus:ring-[#644FC1]"
           required
         />
         <label htmlFor="agree" className="ml-2 block text-sm text-gray-900">
-          I agree with the{" "}
+          I agree with the
           <a href="#" className="text-[#644FC1] hover:underline">
             terms of service
-          </a>{" "}
+          </a>
           of 3F.
         </label>
       </div>
 
-      {/* Navigation Button */}
       <div className="flex justify-start pt-6">
         <button
           type="submit"
           className="bg-[#644FC1] hover:bg-[#523FA0] text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-150 ease-in-out disabled:opacity-50 w-full md:w-auto"
-          disabled={!agreed} // Disable if terms not agreed
+          disabled={!formData.agreed}
         >
           Continue
         </button>
