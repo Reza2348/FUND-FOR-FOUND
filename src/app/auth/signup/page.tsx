@@ -1,19 +1,23 @@
+// src/app/auth/signup/page.tsx
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
+import GoogleLoginComponent from "@/components/GoogleLoginComponent/GoogleLoginComponent"; // مطمئن شوید مسیر درست است
 
+// 1. Updated Schema for First Name, Last Name, Email, and Password
 const signUpSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Invalid email"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  mobileNumber: z.string().min(10, "Mobile number is not valid"),
 });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
@@ -31,14 +35,17 @@ export default function SignUpPage() {
 
   const onSubmit: SubmitHandler<SignUpFormData> = async (data) => {
     try {
-      const { username, email, password, mobileNumber } = data;
+      const { email, password, firstName, lastName } = data;
 
       const { data: signUpData, error: authError } = await supabase.auth.signUp(
         {
           email,
           password,
           options: {
-            data: { username, phone: mobileNumber },
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+            },
           },
         }
       );
@@ -46,25 +53,31 @@ export default function SignUpPage() {
       if (authError) throw authError;
 
       const user = signUpData.user;
+
       if (!user) {
-        toast.info("Check your email to confirm sign up first.");
+        toast.info(
+          "A confirmation link has been sent to your email. Please check your inbox."
+        );
         return;
       }
 
       const { error: profileError } = await supabase.from("profiles").insert([
         {
           user_id: user.id,
-          username,
-          phone: mobileNumber,
           email,
+          first_name: firstName,
+          last_name: lastName,
         },
       ]);
 
       if (profileError) throw profileError;
 
-      toast.success("Registration successful!");
+      toast.success(
+        "Registration successful! Please check your email to confirm your account."
+      );
+
       setTimeout(() => {
-        router.push("/");
+        router.push("/auth/check-email");
       }, 1500);
     } catch (err) {
       console.error("Signup error:", err);
@@ -75,96 +88,151 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
+    <div className="min-h-screen flex items-start justify-center pt-16 bg-white">
+      <div className="max-w-sm w-full bg-white px-8">
+        <h1 className="text-xl font-normal text-center mb-6">
+          Create your personal account
+        </h1>
+
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-purple-700 mb-4 tracking-wider">
+            FUND FOR FOUND
+          </h2>
+          <div className="flex justify-center items-center h-20">
+            <Image
+              src="/Vector.svg"
+              alt="logo"
+              width={30}
+              height={30}
+              priority
+            />
+          </div>
+        </div>
+
+        {/* 👈 اصلاح: حذف <button> والد و اعمال استایل‌ها به کامپوننت فرزند */}
+        <GoogleLoginComponent
+          // انتقال استایل‌های دکمه به اینجا
+          className="w-full border border-gray-300 bg-gray-50 text-gray-700 py-3 rounded-md mt-8 hover:bg-gray-100 transition-colors flex justify-center items-center cursor-pointer"
+        >
+          {/* محتوای بصری دکمه */}
+          <div className="flex items-center space-x-2">
+            {/*  می‌توانید اینجا آیکون گوگل را اضافه کنید */}
+            <span>Continue with google</span>
+          </div>
+        </GoogleLoginComponent>
+
+        <div className="flex items-center my-6">
+          <hr className="flex-grow border-gray-300" />
+          <span className="mx-4 text-gray-500 text-sm">or</span>
+          <hr className="flex-grow border-gray-300" />
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="username" className="block font-medium mb-1">
-              Username
-            </label>
-            <input
-              id="username"
-              {...register("username")}
-              className="w-full border px-3 py-2 rounded-md"
-            />
-            {errors.username && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.username.message}
-              </p>
-            )}
-          </div>
+          {/* ... (فیلدهای فرم: First name, Last name, Email, Password) ... */}
 
           <div>
-            <label htmlFor="mobileNumber" className="block font-medium mb-1">
-              Mobile number
+            <label
+              htmlFor="firstName"
+              className="block text-sm font-medium mb-1"
+            >
+              First name
             </label>
             <input
-              id="mobileNumber"
+              id="firstName"
               type="text"
-              {...register("mobileNumber")}
-              className="w-full border px-3 py-2 rounded-md"
+              {...register("firstName")}
+              className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
+              style={{ padding: "10px 12px" }}
             />
-            {errors.mobileNumber && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.mobileNumber.message}
+            {errors.firstName && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.firstName.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="email" className="block font-medium mb-1">
-              Email
+            <label
+              htmlFor="lastName"
+              className="block text-sm font-medium mb-1"
+            >
+              Last name
+            </label>
+            <input
+              id="lastName"
+              type="text"
+              {...register("lastName")}
+              className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
+              style={{ padding: "10px 12px" }}
+            />
+            {errors.lastName && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.lastName.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
+              Email address
             </label>
             <input
               id="email"
               type="email"
+              placeholder="e.g. yourname@yahoo.com"
               {...register("email")}
-              className="w-full border px-3 py-2 rounded-md"
+              className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
+              style={{ padding: "10px 12px" }}
             />
+            <p className="text-gray-500 text-xs mt-1">
+              We will send a confirmation link to your email.
+            </p>
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-red-500 text-xs mt-1">
                 {errors.email.message}
               </p>
             )}
           </div>
-
           <div>
-            <label htmlFor="password" className="block font-medium mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium mb-1"
+            >
               Password
             </label>
             <input
               id="password"
               type="password"
               {...register("password")}
-              className="w-full border px-3 py-2 rounded-md"
+              className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
+              style={{ padding: "10px 12px" }}
             />
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-red-500 text-xs mt-1">
                 {errors.password.message}
               </p>
             )}
           </div>
+          {/* ... (ادامه فیلدهای فرم) ... */}
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full py-2 rounded-md text-white font-medium transition-colors ${
+            className={`w-full py-3 mt-4 rounded-md text-white font-medium transition-colors ${
               isSubmitting
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-orange-500 hover:bg-orange-600"
+                ? "bg-purple-400 cursor-not-allowed"
+                : "bg-purple-700 hover:bg-purple-800"
             }`}
           >
-            {isSubmitting ? "Signing up..." : "Sign Up"}
+            {isSubmitting ? "Signing up..." : "Continue"}
           </button>
         </form>
 
-        <p className="text-center mt-4 text-sm">
+        <p className="text-center mt-6 text-sm">
           Already have an account?
           <Link
             href="/auth/login"
-            className="text-orange-500 ml-1 hover:underline"
+            className="text-purple-700 ml-1 hover:underline font-medium"
           >
             Login
           </Link>
