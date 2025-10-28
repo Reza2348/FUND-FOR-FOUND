@@ -1,23 +1,43 @@
 "use client";
 
-// Link حذف شد و به تگ <a> استاندارد تغییر کرد تا مشکل resolve نشدن در محیط ایزوله حل شود
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function StepFourPage() {
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
+  const [brands, setBrands] = useState<any[]>([]); // آرایه برای ذخیره برندها
+  const router = useRouter();
 
   // تابع handleSubmit برای تعاملات سمت کلاینت تعریف شده است
   const handleSubmit = () => {
-    // ۱. جمع‌آوری تمام داده‌های فرم
-    // ۲. ارسال نهایی داده‌ها به سرور (API)
-    // ۳. هدایت کاربر به صفحه موفقیت (در این شبیه‌سازی، نمایش پیام)
-
-    // شبیه سازی ارسال موفقیت آمیز
+    // شبیه‌سازی ارسال موفقیت آمیز
     setSubmissionStatus("success");
 
-    // در یک برنامه واقعی، شما ممکن است از router.push استفاده کنید:
-    // router.push('/form/success');
+    // هدایت به صفحه موفقیت بعد از ارسال
+    setTimeout(() => {
+      router.push("/form/success");
+    }, 1500);
   };
+
+  // تابع برای دریافت داده‌ها از API
+  const fetchBrands = async () => {
+    try {
+      const response = await fetch("/api/brands"); // مسیر API برای دریافت داده‌ها از جدول 'brands'
+      if (response.ok) {
+        const data = await response.json();
+        setBrands(data); // ذخیره داده‌های برندها
+      } else {
+        console.error("خطا در دریافت داده‌ها");
+      }
+    } catch (error) {
+      console.error("خطا در برقراری ارتباط با سرور:", error);
+    }
+  };
+
+  // استفاده از useEffect برای بارگذاری داده‌ها هنگام بارگذاری صفحه
+  useEffect(() => {
+    fetchBrands();
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -41,15 +61,15 @@ export default function StepFourPage() {
         <strong className="block mb-2 text-lg">خلاصه داده‌های شما:</strong>
         <ul className="list-disc list-inside space-y-1 text-sm">
           <li>
-            <span className="font-semibold">نام:</span> [Placeholder - باید از
+            <span className="font-semibold">نام:</span> [نام واقعی باید از استیت
+            مرکزی پر شود]
+          </li>
+          <li>
+            <span className="font-semibold">آدرس:</span> [آدرس واقعی باید از
             استیت مرکزی پر شود]
           </li>
           <li>
-            <span className="font-semibold">آدرس:</span> [Placeholder - باید از
-            استیت مرکزی پر شود]
-          </li>
-          <li>
-            <span className="font-semibold">تنظیمات:</span> [Placeholder - باید
+            <span className="font-semibold">تنظیمات:</span> [تنظیمات واقعی باید
             از استیت مرکزی پر شود]
           </li>
         </ul>
@@ -57,6 +77,23 @@ export default function StepFourPage() {
           توجه: این فیلدها در حال حاضر فقط متغیرهای پیش‌فرض هستند و باید به
           داده‌های واقعی فرم متصل شوند.
         </p>
+      </div>
+
+      {/* نمایش برندها */}
+      <div className="border p-4 rounded-xl bg-gray-50 text-gray-800 shadow-inner mt-4">
+        <strong className="block mb-2 text-lg">برندهای موجود:</strong>
+        <ul className="list-disc list-inside space-y-1 text-sm">
+          {brands.length > 0 ? (
+            brands.map((brand) => (
+              <li key={brand.id}>
+                <span className="font-semibold">{brand.name}</span> -{" "}
+                {brand.description}
+              </li>
+            ))
+          ) : (
+            <li>برندهایی وجود ندارند.</li>
+          )}
+        </ul>
       </div>
 
       <div className="flex justify-between pt-6">

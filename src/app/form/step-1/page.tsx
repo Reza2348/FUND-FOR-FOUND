@@ -41,6 +41,32 @@ export default function StepOnePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // ==========================================================
+  // 💡 افزودنی ۱: بازیابی داده‌ها از Local Storage (هنگام بارگذاری صفحه)
+  // ==========================================================
+  useEffect(() => {
+    const savedData = localStorage.getItem("formStep1Data");
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+
+        // بازیابی و تبدیل tags از رشته JSON به آرایه
+        if (parsedData.tags && typeof parsedData.tags === "string") {
+          parsedData.tags = JSON.parse(parsedData.tags);
+        }
+
+        setFormData((prev) => ({
+          ...prev,
+          ...parsedData, // اعمال داده‌های بازیابی شده
+        }));
+        console.log("Restored Form 1 data:", parsedData);
+      } catch (e) {
+        console.error("Error restoring data from Local Storage", e);
+      }
+    }
+  }, []);
+  // ==========================================================
+
   const handleFormChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value, type } = e.target;
@@ -147,19 +173,41 @@ export default function StepOnePage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [containerRef]);
+  // توجه: useEffect برای بازیابی داده‌ها در ابتدای این فایل اضافه شد.
 
   const handleBoxClick = useCallback(() => {
     inputRef.current?.focus();
   }, [inputRef]);
 
+  // ==========================================================
+  // 💡 افزودنی ۲: ذخیره داده‌ها در Local Storage (هنگام ادامه)
+  // ==========================================================
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
+
+      // ۱. آماده سازی داده‌ها (تبدیل tags به رشته JSON)
+      const dataToSave = {
+        ...formData,
+        tags: JSON.stringify(formData.tags), // آرایه را به رشته تبدیل می‌کند
+      };
+
+      // ۲. ذخیره داده‌های فرم ۱
+      try {
+        localStorage.setItem("formStep1Data", JSON.stringify(dataToSave));
+        console.log("Form 1 data saved to Local Storage:", dataToSave);
+      } catch (error) {
+        console.error("Could not save to Local Storage", error);
+        alert("خطا در ذخیره موقت داده‌ها. لطفا مجددا تلاش کنید.");
+        return;
+      }
+
       console.log("Form data:", formData);
       router.push("/form/step-2");
     },
     [formData, router]
   );
+  // ==========================================================
 
   return (
     <form
@@ -172,6 +220,7 @@ export default function StepOnePage() {
       <p className="inline text-[#505050] lg:text-xl sm:text-2xl font-bold mt-3 mb-3">
         Tell about your Brand/organization
       </p>
+      {/* ... بقیه المان‌های فرم بدون تغییر ... */}
 
       <p className="text-gray-600 text-sm">
         Provide an overview of the brand or organization you want to register on
@@ -213,7 +262,7 @@ export default function StepOnePage() {
               id="country"
               name="country"
               value={formData.country}
-              onChange={handleFormChange} // handleFormChange اکنون Select را می‌بندد
+              onChange={handleFormChange}
               className="w-full border border-gray-300 rounded-lg shadow-sm p-3 focus:ring-[#644FC1] focus:border-[#644FC1] transition duration-150 appearance-none bg-white pr-10"
               required
             >
@@ -338,7 +387,7 @@ export default function StepOnePage() {
         <div className="relative">
           <div
             className="flex items-center justify-between border border-gray-300 rounded-lg shadow-sm p-3 focus-within:ring-[#644FC1] focus-within:border-[#644FC1] transition duration-150 cursor-text"
-            onClick={handleBoxClick} // اکنون فقط فوکوس را منتقل می‌کند
+            onClick={handleBoxClick}
           >
             <div className="flex flex-wrap gap-2 flex-1">
               {formData.tags.map((tag) => (
