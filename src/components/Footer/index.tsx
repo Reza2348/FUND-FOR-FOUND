@@ -4,6 +4,8 @@ import React from "react";
 import { FaTwitter, FaGithub, FaDiscord, FaLinkedin } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { usePathname } from "next/navigation";
+import { MdOutlineTranslate } from "react-icons/md";
+import { BsChevronDown } from "react-icons/bs";
 
 interface FooterLink {
   name: string;
@@ -82,8 +84,16 @@ export default function Footer() {
       <div className="border-t border-[#AA99EC]">
         <div className="max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4 mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div>
-            <button className="text-sm text-[#123D6F] border border-white rounded-md px-2 py-1">
-              English
+            <button
+              className="
+    text-sm text-[#123D6F] border border-black rounded-md px-2 py-1
+    flex items-center space-x-1 rtl:space-x-reverse 
+  "
+            >
+              <MdOutlineTranslate />
+              <span>English</span>
+              <samp>(100)</samp>
+              <BsChevronDown />
             </button>
           </div>
           <div className="flex flex-wrap justify-center items-center gap-4">

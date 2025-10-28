@@ -1,49 +1,55 @@
-// form/step-3/page.tsx
+"use client";
 
-import Link from "next/link";
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-export default function StepThreePage() {
+export default function StepTwoPage() {
+  const router = useRouter();
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      router.push("/form/step-4");
+    },
+    [router]
+  );
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold mt-[74px]">
-        مرحله 3: تنظیمات حساب کاربری
-      </h2>
-      <p>
-        در این مرحله، تنظیمات دلخواه مانند رمز عبور یا ترجیحات کاربر ثبت می‌شود.
-      </p>
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-1 sm:space-y-8 lg:w-fit justify-center lg:mx-auto">
+        <h2 className="text-xl text-center font-semibold sm:text-2xl text-[#644FC1]">
+          Detailed info
+        </h2>
 
-      {/* مثال یک فیلد */}
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          رمز عبور
-        </label>
-        <input
-          type="password"
-          id="password"
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          placeholder="رمز عبور قوی"
+        <Image
+          src="/cardt.png.svg"
+          alt="logo"
+          width={500}
+          height={500}
+          priority
         />
-      </div>
 
-      <div className="flex justify-between pt-4">
-        {/* لینک به مرحله قبلی */}
-        <Link
-          href="/form/step-2"
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
-        >
-          قبلی
-        </Link>
-        {/* لینک به مرحله بعدی */}
-        <Link
-          href="/form/step-4"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          بعدی
-        </Link>
+        <div className="mb-6 text-center">
+          <label className="block text-xl font-medium text-[#505050] mb-1">
+            You will be notified as soon as it is approved
+          </label>
+          <p className="text-[#505050] mb-5">
+            Your information is under review and will be confirmed within 2 to 5
+            <br />
+            business days.
+          </p>
+        </div>
+
+        <div className="flex justify-start pt-6">
+          <button
+            type="submit"
+            className="bg-[#644FC1] hover:bg-[#523FA0] text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-150 ease-in-out w-full md:w-auto"
+          >
+            Continue
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
   );
 }
