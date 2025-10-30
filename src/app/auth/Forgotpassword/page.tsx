@@ -85,8 +85,8 @@ export default function ForgotPassword() {
           Trouble with logging in ?
         </h2>
         <p className="text-sm text-[#444444] text-center mb-6">
-          Enter your email address or phone number and we'll <br />
-          send you a link to get back into your account
+          Enter your email address or phone number and we&apos;ll <br /> send
+          you a link to get back into your account
         </p>
 
         <form
