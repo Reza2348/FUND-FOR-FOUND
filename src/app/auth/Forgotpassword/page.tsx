@@ -75,7 +75,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center  px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4">
       <div className="max-w-md w-full p-8 rounded-lg  flex flex-col items-center">
         <div className="mb-6">
           <CiLock size={70} className="text-[#D7CFF9]" />

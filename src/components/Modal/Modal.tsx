@@ -14,6 +14,7 @@ interface TierFormModalProps {
   onClose: () => void;
   initial?: TierData;
   onDelete?: () => void;
+  children?: React.ReactNode;
 }
 
 const defaultInitial: TierData = {

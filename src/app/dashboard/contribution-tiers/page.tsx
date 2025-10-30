@@ -158,7 +158,6 @@ const Page: FC = () => {
         {isModalOpen && (
           <Modal isOpen={isModalOpen} onClose={closeModal}>
             <h2 className="text-2xl font-bold mb-4">👋 افزودن سطح جدید</h2>
-            <p>این مودال با کلیک روی دکمه '+' نمایش داده شده است.</p>
             <button
               onClick={closeModal}
               className={`mt-4 py-2 px-4 bg-[${PRIMARY_PURPLE}] text-white rounded`}
