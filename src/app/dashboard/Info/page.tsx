@@ -2,9 +2,7 @@
 
 import React, { useState } from "react";
 import { HiX } from "react-icons/hi";
-import { SocialMediaSection } from "@/components/Social Media Links/Social Media Links"; // Import the SocialMediaSection component
-
-// The 'SocialLink' interface was here (Lines 7-10) and has been removed.
+import { SocialMediaSection } from "@/components/Social Media Links/Social Media Links";
 
 export default function InfoPage() {
   const [projectTags, setProjectTags] = useState<string[]>([
@@ -84,7 +82,7 @@ export default function InfoPage() {
               value={country}
               onChange={(e) => setCountry(e.target.value)}
               className="appearance-none w-full border border-[#8D75F7] rounded-lg p-3 pr-10 focus:ring-1 focus:ring-[#644FC1] focus:border-[#644FC1] bg-white"
-            />{" "}
+            />
           </div>
         </div>
 
@@ -148,8 +146,8 @@ export default function InfoPage() {
         </div>
       </div>
       <div className="mb-6">
-        <SocialMediaSection />{" "}
-      </div>{" "}
+        <SocialMediaSection />
+      </div>
     </div>
   );
 }

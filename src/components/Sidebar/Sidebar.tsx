@@ -30,13 +30,13 @@ const sections: Section[] = [
     iconMobile: FaGear,
     hasArrow: true,
   },
-  { id: "info", label: "Info" },
-  { id: "contribution-tiers", label: "Contribution tiers" },
-  { id: "about", label: "About" },
-  { id: "team", label: "Team" },
-  { id: "updates", label: "Updates" },
-  { id: "expenses", label: "Expenses" },
-  { id: "pay-out", label: "Pay out" },
+  { id: "/info", label: "Info" },
+  { id: "/contribution-tiers", label: "Contribution tiers" },
+  { id: "/about", label: "About" },
+  { id: "/team", label: "Team" },
+  { id: "/updates", label: "Updates" },
+  { id: "/expenses", label: "Expenses" },
+  { id: "/pay-out", label: "Pay out" },
 ];
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {

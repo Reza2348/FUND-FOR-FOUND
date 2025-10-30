@@ -1,7 +1,8 @@
+// ./src/app/auth/Forgotpassword/page.tsx
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation"; // <-- حذف شد: useRouter دیگر استفاده نمی‌شود
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -31,7 +32,7 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword() {
-  const router = useRouter();
+  // const router = useRouter(); // <-- خط 34 حذف شد: متغیر بلااستفاده
   const {
     register,
     handleSubmit,
@@ -76,7 +77,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
-      <div className="max-w-md w-full p-8 rounded-lg  flex flex-col items-center">
+      <div className="max-w-md w-full p-8 rounded-lg  flex flex-col items-center">
         <div className="mb-6">
           <CiLock size={70} className="text-[#D7CFF9]" />
         </div>
