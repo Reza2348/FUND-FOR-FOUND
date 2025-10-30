@@ -10,9 +10,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
-import GoogleLoginComponent from "@/components/GoogleLoginComponent/GoogleLoginComponent"; // مطمئن شوید مسیر درست است
+import GoogleLoginComponent from "@/components/GoogleLoginComponent/GoogleLoginComponent";
 
-// 1. Updated Schema for First Name, Last Name, Email, and Password
 const signUpSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -109,14 +108,8 @@ export default function SignUpPage() {
           </div>
         </div>
 
-        {/* 👈 اصلاح: حذف <button> والد و اعمال استایل‌ها به کامپوننت فرزند */}
-        <GoogleLoginComponent
-          // انتقال استایل‌های دکمه به اینجا
-          className="w-full border border-gray-300 bg-gray-50 text-gray-700 py-3 rounded-md mt-8 hover:bg-gray-100 transition-colors flex justify-center items-center cursor-pointer"
-        >
-          {/* محتوای بصری دکمه */}
+        <GoogleLoginComponent className="w-full border border-gray-300 bg-gray-50 text-gray-700 py-3 rounded-md mt-8 hover:bg-gray-100 transition-colors flex justify-center items-center cursor-pointer">
           <div className="flex items-center space-x-2">
-            {/*  می‌توانید اینجا آیکون گوگل را اضافه کنید */}
             <span>Continue with google</span>
           </div>
         </GoogleLoginComponent>
@@ -128,8 +121,6 @@ export default function SignUpPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          {/* ... (فیلدهای فرم: First name, Last name, Email, Password) ... */}
-
           <div>
             <label
               htmlFor="firstName"
@@ -213,7 +204,6 @@ export default function SignUpPage() {
               </p>
             )}
           </div>
-          {/* ... (ادامه فیلدهای فرم) ... */}
 
           <button
             type="submit"

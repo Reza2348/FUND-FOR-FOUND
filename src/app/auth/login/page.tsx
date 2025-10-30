@@ -10,19 +10,15 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
-import { FaEye, FaGoogle } from "react-icons/fa"; // Added FaGoogle here
+import { FaEye, FaGoogle } from "react-icons/fa";
 import { useState } from "react";
-import GoogleLoginComponent from "@/components/GoogleLoginComponent/GoogleLoginComponent"; // مطمئن شوید مسیر درست است
+import GoogleLoginComponent from "@/components/GoogleLoginComponent/GoogleLoginComponent";
 
-// ToastContainer dynamic import
 const ToastContainer = dynamic(
   () => import("react-toastify").then((mod) => mod.ToastContainer),
   { ssr: false }
 );
 
-// Schema validation
-// NOTE: Renaming identifier to email if only email login is supported by the current flow
-// Or: Keep identifier, but understand it's only used as an email in the onSubmit logic.
 const loginSchema = z.object({
   identifier: z.string().min(1, "Mobile number or email is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -45,10 +41,8 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
       const { identifier, password } = data;
-      // ISSUE #2: Assuming identifier is email for signInWithPassword.
       const email = identifier;
 
-      // Attempt login with email/password
       const { data: loginData, error } = await supabase.auth.signInWithPassword(
         {
           email,
@@ -59,14 +53,7 @@ export default function LoginPage() {
       if (error) throw error;
       if (!loginData.user) throw new Error("User not found");
 
-      // ISSUE #3: Manual localStorage setting is generally discouraged.
-      // Rely on the Supabase client's session management.
-      // If you absolutely need to store user/session, consider a Context/State manager.
-      // localStorage.setItem("user", JSON.stringify(loginData.user));
-      // localStorage.setItem("session", JSON.stringify(loginData.session));
-
       toast.success("Login successful!");
-      // Redirect after success
       setTimeout(() => router.push("/"), 1000);
     } catch (err) {
       const errorMessage =
@@ -74,8 +61,6 @@ export default function LoginPage() {
       toast.error(errorMessage);
     }
   };
-
-  // Removed handleGoogleSignIn since we're using GoogleLoginComponent directly.
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -89,13 +74,7 @@ export default function LoginPage() {
         <p className="text-center text-gray-600 mb-8">
           Create an account or sign in to start creating
         </p>
-
-        {/* ❌ ISSUE #1 FIX: Directly use GoogleLoginComponent and apply styles and margin. */}
-        <GoogleLoginComponent
-          // Applying the desired button styles and bottom margin
-          className="w-full flex items-center justify-center border border-gray-300 bg-gray-50 text-gray-700 py-3 rounded-md mb-4 hover:bg-gray-100 transition duration-150 cursor-pointer"
-        >
-          {/* Content for the Google button */}
+        <GoogleLoginComponent className="w-full flex items-center justify-center border border-gray-300 bg-gray-50 text-gray-700 py-3 rounded-md mb-4 hover:bg-gray-100 transition duration-150 cursor-pointer">
           <FaGoogle className="w-5 h-5 mr-2" />
           <span>Continue with Google</span>
         </GoogleLoginComponent>
@@ -139,7 +118,6 @@ export default function LoginPage() {
             />
             <FaEye
               className="w-5 h-5 text-gray-400 cursor-pointer absolute right-3 top-2/3 transform -translate-y-1/2"
-              // Adjusted 'top-1/2' to 'top-2/3' to roughly center it relative to the input field if the 'p' tag above is creating an offset.
               onClick={() => setShowPassword(!showPassword)}
             />
             <Link
@@ -148,16 +126,12 @@ export default function LoginPage() {
             >
               Forgot your password?
             </Link>
-            {/* FaEye positioning adjusted based on the input field */}
-
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.password.message}
               </p>
             )}
           </div>
-
-          {/* Submit */}
           <button
             type="submit"
             disabled={isSubmitting}
@@ -166,8 +140,6 @@ export default function LoginPage() {
             {isSubmitting ? "Continuing..." : "Continue"}
           </button>
         </form>
-
-        {/* Signup link */}
         <p className="text-center mt-6 text-sm">
           Don&apos;t have one?
           <Link

@@ -5,28 +5,25 @@ import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { supabase } from "@/lib/supabaseClient"; // مسیردهی به فایل supabaseClient خود را بررسی کنید
+import { supabase } from "@/lib/supabaseClient";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Link from "next/link"; // برای لینک "back to login" و "Create an account"
+import Link from "next/link";
 import { CiLock } from "react-icons/ci";
 
-// طرح‌واره (Schema) اعتبارسنجی برای ایمیل/شماره موبایل
 const forgotPasswordSchema = z.object({
   emailOrPhone: z
     .string()
-    .min(1, "لطفاً ایمیل یا شماره موبایل خود را وارد کنید")
+    .min(1, "Please enter your email or mobile number")
     .refine(
       (value) => {
-        // اعتبار سنجی ساده برای ایمیل یا شماره موبایل
-        // می‌تواند با regex های دقیق‌تر بهبود یابد
         return (
           z.string().email().safeParse(value).success ||
-          /^\+?\d{10,15}$/.test(value) // مثال: برای شماره موبایل
+          /^\+?\d{10,15}$/.test(value)
         );
       },
       {
-        message: "فرمت ایمیل یا شماره موبایل صحیح نیست",
+        message: "The email or mobile number format is not valid",
       }
     ),
 });
@@ -48,25 +45,19 @@ export default function ForgotPassword() {
       const { emailOrPhone } = data;
       let error = null;
 
-      // Supabase به طور خودکار تشخیص می‌دهد که ورودی ایمیل است یا شماره تلفن
       const isEmail = z.string().email().safeParse(emailOrPhone).success;
 
       if (isEmail) {
-        // ارسال لینک بازنشانی رمز عبور به ایمیل
         const { error: emailError } = await supabase.auth.resetPasswordForEmail(
           emailOrPhone,
           {
-            redirectTo: `${window.location.origin}/auth/update-password`, // مسیری که کاربر پس از کلیک بر روی لینک به آن هدایت می‌شود
+            redirectTo: `${window.location.origin}/auth/update-password`,
           }
         );
         error = emailError;
       } else {
-        // Supabase در حال حاضر (تا زمان نگارش این کد) تابع مستقیمی برای `resetPasswordForPhone` ندارد
-        // برای بازنشانی رمز عبور از طریق SMS نیاز به پیاده‌سازی بک‌اند کاستوم دارید.
-        // برای سادگی و مطابقت با Supabase auth، فعلاً بر روی ایمیل تمرکز می‌کنیم.
-        // اگر شماره موبایل تنها راه ورود است، باید جریان متفاوتی برای OTP پیاده کنید.
         toast.error(
-          "بازنشانی رمز عبور از طریق شماره موبایل در حال حاضر پشتیبانی نمی‌شود. لطفاً از ایمیل استفاده کنید."
+          "Password reset via mobile number is not currently supported. Please use email."
         );
         return;
       }
@@ -74,12 +65,11 @@ export default function ForgotPassword() {
       if (error) throw error;
 
       toast.success(
-        "لینک بازنشانی رمز عبور به ایمیل شما ارسال شد. لطفاً صندوق ورودی خود را بررسی کنید."
+        "A password reset link has been sent to your email. Please check your inbox."
       );
-      // نیازی به هدایت فوری نیست، کاربر باید ایمیل را چک کند
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "خطای ناشناخته‌ای رخ داد.";
+        err instanceof Error ? err.message : "An unknown error occurred.";
       toast.error(errorMessage);
     }
   };
@@ -112,7 +102,7 @@ export default function ForgotPassword() {
             </label>
             <input
               id="emailOrPhone"
-              type="text" // می‌تواند 'email' باشد اگر فقط ایمیل مجاز است
+              type="text"
               {...register("emailOrPhone")}
               placeholder="youremail@yahoo.com or 0912326578"
               className="w-full border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500 p-2"
@@ -133,7 +123,7 @@ export default function ForgotPassword() {
                 : "bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             } transition-colors duration-200`}
           >
-            {isSubmitting ? "در حال ارسال..." : "Continue"}
+            {isSubmitting ? "Sending..." : "Continue"}
           </button>
         </form>
 
