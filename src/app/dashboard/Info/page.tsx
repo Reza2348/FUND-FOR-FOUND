@@ -4,10 +4,7 @@ import React, { useState } from "react";
 import { HiX } from "react-icons/hi";
 import { SocialMediaSection } from "@/components/Social Media Links/Social Media Links"; // Import the SocialMediaSection component
 
-interface SocialLink {
-  type: string;
-  url: string;
-}
+// The 'SocialLink' interface was here (Lines 7-10) and has been removed.
 
 export default function InfoPage() {
   const [projectTags, setProjectTags] = useState<string[]>([
@@ -35,6 +32,7 @@ export default function InfoPage() {
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Use the below code in your analysis for tracking your page
         </label>
+
         <input
           type="text"
           placeholder="3F-5000021100F545X57P0012"
@@ -46,6 +44,7 @@ export default function InfoPage() {
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Link to your brand or organization
         </label>
+
         <input
           type="text"
           placeholder="http://fundforfound.com/brand/@chanelb"
@@ -53,7 +52,6 @@ export default function InfoPage() {
           className="w-full border border-[#8D75F7] rounded-lg p-2 focus:ring-1 focus:ring-[#644FC1] focus:border-[#644FC1]"
         />
       </div>
-
       <div className="mb-6">
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="relative w-full">
@@ -63,6 +61,7 @@ export default function InfoPage() {
             >
               Project title
             </label>
+
             <input
               id="project-title"
               type="text"
@@ -71,6 +70,7 @@ export default function InfoPage() {
               className="appearance-none w-full border border-[#8D75F7] rounded-lg p-3 pr-10 focus:ring-1 focus:ring-[#644FC1] focus:border-[#644FC1] bg-white"
             />
           </div>
+
           <div className="relative w-full">
             <label
               htmlFor="country"
@@ -84,9 +84,10 @@ export default function InfoPage() {
               value={country}
               onChange={(e) => setCountry(e.target.value)}
               className="appearance-none w-full border border-[#8D75F7] rounded-lg p-3 pr-10 focus:ring-1 focus:ring-[#644FC1] focus:border-[#644FC1] bg-white"
-            />
+            />{" "}
           </div>
         </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="relative w-full">
             <label
@@ -95,6 +96,7 @@ export default function InfoPage() {
             >
               Project category
             </label>
+
             <input
               id="project-category"
               type="text"
@@ -103,6 +105,7 @@ export default function InfoPage() {
               className="appearance-none w-full border border-[#8D75F7] rounded-lg p-3 pr-10 focus:ring-1 focus:ring-[#644FC1] focus:border-[#644FC1] bg-white"
             />
           </div>
+
           <div className="relative w-full">
             <label
               htmlFor="project-subcategory"
@@ -110,6 +113,7 @@ export default function InfoPage() {
             >
               Project subcategory
             </label>
+
             <input
               id="project-subcategory"
               type="text"
@@ -120,11 +124,11 @@ export default function InfoPage() {
           </div>
         </div>
       </div>
-
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Project tags
         </label>
+
         <div className="flex flex-wrap gap-2 border border-[#8D75F7] rounded-lg p-2 focus-within:ring-1 focus-within:ring-[#644FC1] focus-within:border-[#644FC1]">
           {projectTags.map((tag, index) => (
             <span
@@ -143,11 +147,9 @@ export default function InfoPage() {
           ))}
         </div>
       </div>
-
-      {/* Social Media Section */}
       <div className="mb-6">
-        <SocialMediaSection /> {/* Empty array or pass actual links */}
-      </div>
+        <SocialMediaSection />{" "}
+      </div>{" "}
     </div>
   );
 }

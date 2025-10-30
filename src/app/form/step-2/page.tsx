@@ -79,7 +79,6 @@ export default function StepTwoPage() {
         return;
       }
 
-      // ۳. هدایت به مرحله بعد
       router.push("/form/step-3");
     },
     [description, socialLinks, router]
@@ -91,9 +90,11 @@ export default function StepTwoPage() {
         <h2 className="text-xl font-semibold sm:text-2xl text-[#644FC1]">
           Detailed info
         </h2>
+
         <label className="block text-sm font-medium text-gray-700 mt-3 mb-1">
           Description
         </label>
+
         <textarea
           value={description}
           onChange={handleDescriptionChange}
@@ -101,12 +102,14 @@ export default function StepTwoPage() {
           rows={5}
           placeholder="Enter your text here"
         />
+
         <p className="mt-2 text-gray-500">{description.length} characters</p>
 
         <div className="mb-6">
           <label className="block text-xl font-medium text-[#505050S] mb-1">
             Help your contributors find you faster (at least 3 options)
           </label>
+
           <p className="text-[#505050] mb-5">
             Connect your socials so the contributors get to know you better and
             find you faster
@@ -114,7 +117,6 @@ export default function StepTwoPage() {
 
           <SocialMediaSection />
         </div>
-
         <div className="flex justify-start pt-6">
           <button
             type="submit"

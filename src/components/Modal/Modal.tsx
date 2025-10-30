@@ -1,12 +1,5 @@
 "use client";
-import React, {
-  useEffect,
-  useState,
-  ChangeEvent,
-  FormEvent,
-  ReactNode, // ❌ این خط حذف شود چون 'children' استفاده نمی‌شود
-} from "react";
-// ✅ FIX 1: ایمپورت کامپوننت Image از Next.js برای بهینه‌سازی
+import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Image from "next/image";
 
 interface TierData {
@@ -21,7 +14,6 @@ interface TierFormModalProps {
   onClose: () => void;
   initial?: TierData;
   onDelete?: () => void;
-  // children?: ReactNode; // ✅ FIX 2: حذف شد زیرا در کامپوننت استفاده نشده است.
 }
 
 const defaultInitial: TierData = {
@@ -36,7 +28,6 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
   onClose,
   initial = defaultInitial,
   onDelete,
-  // children, // ✅ FIX 2: حذف شد
 }) => {
   const [tierData, setTierData] = useState<TierData>(initial);
 
@@ -46,16 +37,16 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
       document.body.style.overflow = "hidden";
 
       const handleKey = (e: KeyboardEvent) => {
-        if (e.key === "Escape") onClose();
+        if (e.key === "Escape") handleClose();
       };
+
       window.addEventListener("keydown", handleKey);
       return () => {
         window.removeEventListener("keydown", handleKey);
         document.body.style.overflow = previousOverflow || "unset";
       };
     }
-    return;
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   useEffect(() => {
     setTierData(initial);
@@ -65,15 +56,23 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
-    setTierData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
+    setTierData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Only image files are allowed");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size must be less than 5MB");
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       setTierData((prev) => ({
@@ -90,14 +89,16 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
 
   const handleSave = (e: FormEvent) => {
     e.preventDefault();
-
-    onClose();
+    handleClose();
   };
 
   const handleDeleteTier = () => {
-    if (onDelete) {
-      onDelete();
-    }
+    if (onDelete) onDelete();
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setTierData(initial);
     onClose();
   };
 
@@ -112,8 +113,8 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
   const primaryRingFocus = "focus:ring-indigo-500 focus:border-indigo-500";
 
   const formatAmountForPreview = (amount: string) => {
-    const match = amount.match(/(\d+(?:[.,]\d+)*)\s*(USD|\$|Toman|تومان)?/i);
-    return match ? `$${match[1].replace(",", ".")}` : amount;
+    const num = parseFloat(amount.replace(/[^0-9.]/g, ""));
+    return isNaN(num) ? amount : `$${num.toLocaleString()}`;
   };
 
   return (
@@ -121,18 +122,23 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md p-4 transition-opacity duration-300"
       aria-modal="true"
       role="dialog"
-      onClick={onClose}
+      aria-labelledby="tier-modal-title"
+      onClick={handleClose}
     >
       <div
-        className="w-full max-w-5xl bg-white rounded-xl shadow-2xl overflow-hidden max-h-[90vh] transform transition-all duration-300 flex flex-col" // flex-col برای چیدمان داخلی
+        className="w-full max-w-5xl bg-white rounded-xl shadow-2xl overflow-hidden max-h-[90vh] transform transition-all duration-300 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-gray-100 flex-shrink-0">
-          <h3 className="text-lg font-semibold text-indigo-600">
+          <h3
+            id="tier-modal-title"
+            className="text-lg font-semibold text-indigo-600"
+          >
             Contribution Tier
           </h3>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close modal"
             className="text-gray-400 hover:text-gray-600 rounded-md p-1"
           >
@@ -210,11 +216,10 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
                       title="Upload cover image"
                     >
                       {tierData.coverDataUrl ? (
-                        // ✅ FIX 1: جایگزینی <img> با <Image /> Next.js
                         <Image
                           src={tierData.coverDataUrl}
                           alt="cover preview"
-                          fill // استفاده از fill برای پر کردن کانتینر
+                          fill
                           className="object-cover"
                         />
                       ) : (
@@ -282,11 +287,10 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
 
                   <div className="w-full h-28 mx-auto mb-4 rounded-md flex items-center justify-center text-gray-500 font-medium text-sm border border-indigo-200 overflow-hidden relative">
                     {tierData.coverDataUrl ? (
-                      // ✅ FIX 1: جایگزینی <img> با <Image /> Next.js
                       <Image
                         src={tierData.coverDataUrl}
                         alt="Cover preview"
-                        fill // استفاده از fill برای پر کردن کانتینر
+                        fill
                         className="object-cover"
                       />
                     ) : (

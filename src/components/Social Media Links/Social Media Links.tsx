@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { HiX, HiPlus } from "react-icons/hi";
 import {
   FaInstagram,
@@ -34,6 +34,7 @@ interface SocialSelectProps {
   link: SocialLink;
   index: number;
   availableTypes: string[];
+  usedTypes: string[];
   updateType: (index: number, newType: string) => void;
 }
 
@@ -41,13 +42,35 @@ const SocialSelect: React.FC<SocialSelectProps> = ({
   link,
   index,
   availableTypes,
+  usedTypes,
   updateType,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const currentIcon = socialMediaIcons[link.type];
+  const ref = useRef<HTMLDivElement>(null);
+
+  const currentIcon = socialMediaIcons[link.type] || (
+    <FaGlobe className="text-gray-500" />
+  );
+
+  const selectableTypes = availableTypes.filter(
+    (type) => !usedTypes.includes(type) || type === link.type
+  );
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="relative w-full sm:w-52 flex-shrink-0">
+    <div ref={ref} className="relative w-full sm:w-52 flex-shrink-0">
       <button
         type="button"
         className="flex items-center justify-between w-full border border-[#8D75F7] rounded-lg p-3 bg-white focus:ring-1 focus:ring-[#644FC1] focus:border-[#644FC1] transition"
@@ -63,7 +86,7 @@ const SocialSelect: React.FC<SocialSelectProps> = ({
 
       {isOpen && (
         <div className="absolute left-0 mt-1 w-full sm:w-52 bg-white border border-gray-200 rounded-lg shadow-xl z-20 max-h-60 overflow-y-auto">
-          {availableTypes.map((type) => (
+          {selectableTypes.map((type) => (
             <div
               key={type}
               onClick={() => {
@@ -89,6 +112,7 @@ export const SocialMediaSection: React.FC = () => {
     { type: "Website", url: "" },
   ]);
   const [showSocialDropdown, setShowSocialDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const availableSocialTypes = Object.keys(socialMediaIcons);
   const usedSocialTypes = socialLinks.map((link) => link.type);
@@ -97,30 +121,38 @@ export const SocialMediaSection: React.FC = () => {
   );
 
   const removeSocialLink = (index: number) => {
-    setSocialLinks(socialLinks.filter((_, i) => i !== index));
+    setSocialLinks((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addSocialLink = (type: string) => {
-    setSocialLinks([...socialLinks, { type, url: "" }]);
+    setSocialLinks((prev) => [...prev, { type, url: "" }]);
     setShowSocialDropdown(false);
   };
 
-  const updateSocialLinkType = useCallback(
-    (index: number, newType: string) => {
-      setSocialLinks(
-        socialLinks.map((link, i) =>
-          i === index ? { ...link, type: newType } : link
-        )
-      );
-    },
-    [socialLinks]
-  );
-
-  const updateSocialLinkUrl = (index: number, newUrl: string) => {
-    setSocialLinks(
-      socialLinks.map((l, i) => (i === index ? { ...l, url: newUrl } : l))
+  const updateSocialLinkType = useCallback((index: number, newType: string) => {
+    setSocialLinks((prev) =>
+      prev.map((link, i) => (i === index ? { ...link, type: newType } : link))
     );
-  };
+  }, []);
+
+  const updateSocialLinkUrl = useCallback((index: number, newUrl: string) => {
+    setSocialLinks((prev) =>
+      prev.map((link, i) => (i === index ? { ...link, url: newUrl } : link))
+    );
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowSocialDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="mb-6">
@@ -138,6 +170,7 @@ export const SocialMediaSection: React.FC = () => {
               link={link}
               index={index}
               availableTypes={availableSocialTypes}
+              usedTypes={usedSocialTypes}
               updateType={updateSocialLinkType}
             />
             <input
@@ -158,7 +191,7 @@ export const SocialMediaSection: React.FC = () => {
         ))}
       </div>
 
-      <div className="relative mt-4 flex justify-center">
+      <div ref={dropdownRef} className="relative mt-4 flex justify-center">
         <button
           type="button"
           onClick={() => setShowSocialDropdown(!showSocialDropdown)}
