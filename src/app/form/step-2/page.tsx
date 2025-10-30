@@ -22,6 +22,7 @@ export default function StepTwoPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Note: In a real app, you should replace localStorage with Firestore
     const savedData = localStorage.getItem("formStep2Data");
     if (savedData) {
       try {
@@ -60,8 +61,9 @@ export default function StepTwoPage() {
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
+      // Note: Do not use alert(). Replace this with a custom modal UI.
       if (!description.trim()) {
-        alert("Please fill out the description.");
+        console.error("Please fill out the description.");
         return;
       }
 
@@ -75,7 +77,7 @@ export default function StepTwoPage() {
         console.log("Form 2 data saved to Local Storage:", allStep2Data);
       } catch (error) {
         console.error("Could not save Form 2 to Local Storage", error);
-        alert("خطا در ذخیره موقت داده‌ها. لطفا مجددا تلاش کنید.");
+        // Note: Do not use alert(). Replace this with a custom modal UI.
         return;
       }
 
@@ -114,8 +116,11 @@ export default function StepTwoPage() {
             Connect your socials so the contributors get to know you better and
             find you faster
           </p>
-
-          <SocialMediaSection />
+          {/* PASSING THE PROPS TO RESOLVE THE UNUSED VARIABLE WARNING */}
+          <SocialMediaSection
+            socialLinks={socialLinks}
+            onSocialLinkChange={handleSocialLinkChange}
+          />
         </div>
         <div className="flex justify-start pt-6">
           <button

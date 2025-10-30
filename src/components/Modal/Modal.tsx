@@ -1,5 +1,13 @@
+// ./src/components/Modal/Modal.tsx
+
 "use client";
-import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import React, {
+  useEffect,
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useCallback, // <--- 1. Added useCallback import
+} from "react";
 import Image from "next/image";
 
 interface TierData {
@@ -32,6 +40,15 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
 }) => {
   const [tierData, setTierData] = useState<TierData>(initial);
 
+  // 2. Wrapped handleClose in useCallback
+  const handleClose = useCallback(() => {
+    setTierData(initial);
+    onClose();
+  }, [initial, onClose]); // Dependencies for useCallback
+
+  // 3. Added handleClose to the dependency array of useEffect
+  // FIX: This useEffect now includes 'handleClose' as a dependency.
+  // Because handleClose is wrapped in useCallback, the function itself is stable.
   useEffect(() => {
     if (isOpen) {
       const previousOverflow = document.body.style.overflow;
@@ -47,7 +64,7 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
         document.body.style.overflow = previousOverflow || "unset";
       };
     }
-  }, [isOpen]);
+  }, [isOpen, handleClose]); // <--- Dependency 'handleClose' added here.
 
   useEffect(() => {
     setTierData(initial);
@@ -98,10 +115,8 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
     handleClose();
   };
 
-  const handleClose = () => {
-    setTierData(initial);
-    onClose();
-  };
+  // The 'handleClose' declaration is now above the useEffect hook, and is wrapped in useCallback.
+  // This allows the linter to correctly detect it.
 
   const handleContributeClick = () => {
     alert(`Simulating contribution to tier: ${tierData.name}`);
