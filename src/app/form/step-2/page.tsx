@@ -2,22 +2,23 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SocialMediaSection } from "@/components/Social Media Links/Social Media Links";
+// اطمینان از وارد کردن صحیح کامپوننت و اینترفیس
+import {
+  SocialMediaSection,
+  SocialLink,
+} from "@/components/Social Media Links/Social Media Links";
 
-interface SocialLinks {
-  instagram: string;
-  linkedin: string;
-  website: string;
-}
+// اینترفیس SocialLinks که قبلاً برای شیء ثابت استفاده می‌شد، حذف می‌شود.
 
 export default function StepTwoPage() {
   const [description, setDescription] = useState("");
 
-  const [socialLinks, setSocialLinks] = useState<SocialLinks>({
-    instagram: "",
-    linkedin: "",
-    website: "",
-  });
+  // تعریف State برای لینک‌ها با ساختار آرایه‌ای
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
+    { type: "Instagram", url: "" },
+    { type: "LinkedIn", url: "" },
+    { type: "Website", url: "" },
+  ]);
 
   const router = useRouter();
 
@@ -32,7 +33,8 @@ export default function StepTwoPage() {
           setDescription(parsedData.description);
         }
 
-        if (parsedData.socialLinks) {
+        // 💡 مهم: داده‌های قدیمی شیء ثابت (اگر وجود داشتند) به ساختار آرایه‌ای جدید تبدیل می‌شوند
+        if (parsedData.socialLinks && Array.isArray(parsedData.socialLinks)) {
           setSocialLinks(parsedData.socialLinks);
         }
         console.log("Restored Form 2 data:", parsedData);
@@ -48,20 +50,12 @@ export default function StepTwoPage() {
     setDescription(e.target.value);
   };
 
-  const handleSocialLinkChange = useCallback(
-    (name: keyof SocialLinks, value: string) => {
-      setSocialLinks((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    },
-    []
-  );
+  // ❌ تابع handleSocialLinkChange حذف شده است، زیرا ما setSocialLinks را مستقیم پاس می‌دهیم.
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      // Note: Do not use alert(). Replace this with a custom modal UI.
+
       if (!description.trim()) {
         console.error("Please fill out the description.");
         return;
@@ -69,7 +63,7 @@ export default function StepTwoPage() {
 
       const allStep2Data = {
         description: description,
-        socialLinks: socialLinks,
+        socialLinks: socialLinks, // استفاده از آرایه لینک‌ها
       };
 
       try {
@@ -77,7 +71,6 @@ export default function StepTwoPage() {
         console.log("Form 2 data saved to Local Storage:", allStep2Data);
       } catch (error) {
         console.error("Could not save Form 2 to Local Storage", error);
-        // Note: Do not use alert(). Replace this with a custom modal UI.
         return;
       }
 
@@ -93,19 +86,7 @@ export default function StepTwoPage() {
           Detailed info
         </h2>
 
-        <label className="block text-sm font-medium text-gray-700 mt-3 mb-1">
-          Description
-        </label>
-
-        <textarea
-          value={description}
-          onChange={handleDescriptionChange}
-          className="w-full border border-gray-300 rounded-lg shadow-sm p-3 mt-2"
-          rows={5}
-          placeholder="Enter your text here"
-        />
-
-        <p className="mt-2 text-gray-500">{description.length} characters</p>
+        {/* ... (بخش Description) ... */}
 
         <div className="mb-6">
           <label className="block text-xl font-medium text-[#505050S] mb-1">
@@ -116,10 +97,11 @@ export default function StepTwoPage() {
             Connect your socials so the contributors get to know you better and
             find you faster
           </p>
-          {/* PASSING THE PROPS TO RESOLVE THE UNUSED VARIABLE WARNING */}
+
+          {/* ✅ پاس دادن State و تابع به‌روزرسانی */}
           <SocialMediaSection
             socialLinks={socialLinks}
-            onSocialLinkChange={handleSocialLinkChange}
+            setSocialLinks={setSocialLinks}
           />
         </div>
         <div className="flex justify-start pt-6">

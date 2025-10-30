@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  ReactNode,
+  useEffect,
+  useRef,
+} from "react";
 import { HiX, HiPlus } from "react-icons/hi";
 import {
   FaInstagram,
@@ -13,6 +19,19 @@ import {
 } from "react-icons/fa";
 import { RiArrowDownSLine } from "react-icons/ri";
 
+// === اینترفیس‌های مشترک و ضروری ===
+export interface SocialLink {
+  // <-- مهم: Export شده برای استفاده در page.tsx
+  type: string;
+  url: string;
+}
+
+// === اینترفیس Props اصلی کامپوننت ===
+export interface SocialMediaSectionProps {
+  socialLinks: SocialLink[];
+  setSocialLinks: React.Dispatch<React.SetStateAction<SocialLink[]>>;
+}
+
 const socialMediaIcons: Record<string, React.ReactNode> = {
   Website: <FaGlobe className="text-gray-500" />,
   YouTube: <FaYoutube className="text-red-600" />,
@@ -25,24 +44,20 @@ const socialMediaIcons: Record<string, React.ReactNode> = {
   LinkedIn: <FaLinkedin className="text-blue-600" />,
 };
 
-interface SocialLink {
-  type: string;
-  url: string;
-}
-
 interface SocialSelectProps {
   link: SocialLink;
   index: number;
   availableTypes: string[];
-  usedTypes: string[];
+  usedTypes: string[]; // افزودن usedTypes برای فیلتر کردن
   updateType: (index: number, newType: string) => void;
+  // chidl: ReactNode; // این Prop حذف شد چون در SocialSelect استفاده نشده بود
 }
 
 const SocialSelect: React.FC<SocialSelectProps> = ({
   link,
   index,
   availableTypes,
-  usedTypes,
+  usedTypes, // دریافت usedTypes
   updateType,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,11 +67,12 @@ const SocialSelect: React.FC<SocialSelectProps> = ({
     <FaGlobe className="text-gray-500" />
   );
 
+  // فیلتر کردن انواع شبکه‌های اجتماعی که قبلاً استفاده شده‌اند
   const selectableTypes = availableTypes.filter(
     (type) => !usedTypes.includes(type) || type === link.type
   );
 
-  // Close dropdown when clicking outside
+  // useEffect برای بستن دراپ‌داون هنگام کلیک بیرون
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
@@ -105,12 +121,14 @@ const SocialSelect: React.FC<SocialSelectProps> = ({
   );
 };
 
-export const SocialMediaSection: React.FC = () => {
-  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
-    { type: "Instagram", url: "" },
-    { type: "Discord", url: "" },
-    { type: "Website", url: "" },
-  ]);
+// === تعریف کامپوننت SocialMediaSection اصلاح شده ===
+export const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
+  socialLinks,
+  setSocialLinks, // دریافت Propsهای مدیریتی
+}) => {
+  // ❌ State داخلی socialLinks حذف شد
+
+  // ✅ فقط State مربوط به UI باقی می‌ماند
   const [showSocialDropdown, setShowSocialDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -120,27 +138,34 @@ export const SocialMediaSection: React.FC = () => {
     (type) => !usedSocialTypes.includes(type)
   );
 
+  // توابع به‌روزرسانی که از setSocialLinks آمده از Props استفاده می‌کنند
   const removeSocialLink = (index: number) => {
-    setSocialLinks((prev) => prev.filter((_, i) => i !== index));
+    setSocialLinks((prevLinks) => prevLinks.filter((_, i) => i !== index));
   };
 
   const addSocialLink = (type: string) => {
-    setSocialLinks((prev) => [...prev, { type, url: "" }]);
+    setSocialLinks((prevLinks) => [...prevLinks, { type, url: "" }]);
     setShowSocialDropdown(false);
   };
 
-  const updateSocialLinkType = useCallback((index: number, newType: string) => {
-    setSocialLinks((prev) =>
-      prev.map((link, i) => (i === index ? { ...link, type: newType } : link))
-    );
-  }, []);
+  const updateSocialLinkType = useCallback(
+    (index: number, newType: string) => {
+      setSocialLinks((prevLinks) =>
+        prevLinks.map((link, i) =>
+          i === index ? { ...link, type: newType } : link
+        )
+      );
+    },
+    [setSocialLinks]
+  );
 
-  const updateSocialLinkUrl = useCallback((index: number, newUrl: string) => {
-    setSocialLinks((prev) =>
-      prev.map((link, i) => (i === index ? { ...link, url: newUrl } : link))
+  const updateSocialLinkUrl = (index: number, newUrl: string) => {
+    setSocialLinks((prevLinks) =>
+      prevLinks.map((l, i) => (i === index ? { ...l, url: newUrl } : l))
     );
-  }, []);
+  };
 
+  // useEffect برای بستن دراپ‌داون هنگام کلیک بیرون
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -170,7 +195,7 @@ export const SocialMediaSection: React.FC = () => {
               link={link}
               index={index}
               availableTypes={availableSocialTypes}
-              usedTypes={usedSocialTypes}
+              usedTypes={usedSocialTypes} // پاس دادن usedTypes
               updateType={updateSocialLinkType}
             />
             <input
