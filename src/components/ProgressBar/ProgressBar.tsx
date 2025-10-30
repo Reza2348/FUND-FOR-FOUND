@@ -16,13 +16,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
 
   return (
-    // حذف max-w-9xl و mt-2 و اضافه کردن px-4 برای padding در موبایل
     <div className="mx-auto pt-6 px-4 sm:px-6">
       <div className="flex items-center justify-between pb-6">
-        {/* دکمه بازگشت: حذف فاصله‌های ثابت و استفاده از کلاس‌های padding و margin ریسپانسیو */}
         <button className="p-2 transition duration-150 ease-in-out">
-          {/* حذف mr-[25px] و ml-[29px] و استفاده از فضای داخلی دکمه */}
-          {/* بهتر است دکمه به گام قبلی برگردد، نه روت اصلی (/) */}
           <Link
             href={`/form/step-${Math.max(1, currentStep - 1)}`}
             aria-label="مرحله قبلی"
@@ -30,12 +26,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
             <FaArrowLeft className="w-6 h-6 text-[#644FC1]" />
           </Link>
         </button>
-        {/* کانتینر مراحل: مرکزیت و فاصله‌گذاری مناسب در موبایل */}
-        {/* حذف pr-12 و استفاده از flex-1 برای پر کردن فضا */}
         <div className="flex items-center justify-center flex-1 max-w-md mx-auto">
           {steps.map((step, index) => (
             <React.Fragment key={step}>
-              {/* دایره مرحله */}
               <div
                 className={`
                   w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors duration-300
@@ -49,7 +42,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                 {step}
               </div>
 
-              {/* خط اتصال (Connector) */}
               {index < totalSteps - 1 && (
                 <div
                   className={`
@@ -62,7 +54,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
             </React.Fragment>
           ))}
         </div>
-        {/* عنصر Spacer: حذف w-10 و استفاده از عرض دکمه بازگشت */}
         <div className="w-10 invisible"></div>{" "}
       </div>
     </div>
