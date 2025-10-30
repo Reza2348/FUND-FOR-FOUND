@@ -124,11 +124,15 @@ export default function StepOnePage() {
     [formData.tags]
   );
 
-  const handleSuggestionClick = (tag: string) => {
-    addTag(tag);
-    setIsDropdownOpen(false);
-    inputRef.current?.focus();
-  };
+  // ✅ FIX: تبدیل به useCallback برای رفع هشدار در handleKeyDown
+  const handleSuggestionClick = useCallback(
+    (tag: string) => {
+      addTag(tag);
+      setIsDropdownOpen(false);
+      inputRef.current?.focus();
+    },
+    [addTag] // وابستگی به addTag
+  );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,6 +140,8 @@ export default function StepOnePage() {
         e.preventDefault();
 
         if (filteredSuggestions.length === 1) {
+          // توجه: filteredSuggestions یک متغیر معمولی است، نه یک هوک
+          // اما تغییر آن به عنوان وابستگی ضروری است تا مقدار به‌روز داشته باشد.
           handleSuggestionClick(filteredSuggestions[0]);
         }
       }
@@ -145,7 +151,7 @@ export default function StepOnePage() {
         inputRef.current?.blur();
       }
     },
-    [filteredSuggestions, addTag]
+    [filteredSuggestions, handleSuggestionClick] // ✅ FIX: وابستگی‌ها شامل handleSuggestionClick هستند.
   );
 
   const removeTag = useCallback(

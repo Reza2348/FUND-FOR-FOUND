@@ -4,8 +4,10 @@ import React, {
   useState,
   ChangeEvent,
   FormEvent,
-  ReactNode,
+  ReactNode, // ❌ این خط حذف شود چون 'children' استفاده نمی‌شود
 } from "react";
+// ✅ FIX 1: ایمپورت کامپوننت Image از Next.js برای بهینه‌سازی
+import Image from "next/image";
 
 interface TierData {
   name: string;
@@ -19,7 +21,7 @@ interface TierFormModalProps {
   onClose: () => void;
   initial?: TierData;
   onDelete?: () => void;
-  children?: ReactNode;
+  // children?: ReactNode; // ✅ FIX 2: حذف شد زیرا در کامپوننت استفاده نشده است.
 }
 
 const defaultInitial: TierData = {
@@ -34,6 +36,7 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
   onClose,
   initial = defaultInitial,
   onDelete,
+  // children, // ✅ FIX 2: حذف شد
 }) => {
   const [tierData, setTierData] = useState<TierData>(initial);
 
@@ -207,10 +210,12 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
                       title="Upload cover image"
                     >
                       {tierData.coverDataUrl ? (
-                        <img
+                        // ✅ FIX 1: جایگزینی <img> با <Image /> Next.js
+                        <Image
                           src={tierData.coverDataUrl}
                           alt="cover preview"
-                          className="object-cover w-full h-full"
+                          fill // استفاده از fill برای پر کردن کانتینر
+                          className="object-cover"
                         />
                       ) : (
                         <span className="select-none text-3xl">+</span>
@@ -275,12 +280,14 @@ const TierFormModal: React.FC<TierFormModalProps> = ({
                     You are on the list
                   </p>
 
-                  <div className="w-full h-28 mx-auto mb-4 rounded-md flex items-center justify-center text-gray-500 font-medium text-sm border border-indigo-200 overflow-hidden">
+                  <div className="w-full h-28 mx-auto mb-4 rounded-md flex items-center justify-center text-gray-500 font-medium text-sm border border-indigo-200 overflow-hidden relative">
                     {tierData.coverDataUrl ? (
-                      <img
+                      // ✅ FIX 1: جایگزینی <img> با <Image /> Next.js
+                      <Image
                         src={tierData.coverDataUrl}
                         alt="Cover preview"
-                        className="object-cover w-full h-full"
+                        fill // استفاده از fill برای پر کردن کانتینر
+                        className="object-cover"
                       />
                     ) : (
                       <div className="w-full h-full bg-indigo-50 flex items-center justify-center text-indigo-300">

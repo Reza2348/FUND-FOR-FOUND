@@ -3,10 +3,20 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+// ✅ اضافه کردن Interface برای رفع خطای 'any'
+interface Brand {
+  id: number | string; // id می‌تواند number یا string باشد، بسته به API شما
+  name: string;
+  description: string;
+}
+
 export default function StepFourPage() {
   const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
-  const [brands, setBrands] = useState<any[]>([]); // آرایه برای ذخیره برندها
+  // ✅ اصلاح خط 8: جایگزینی any[] با Brand[]
+  const [brands, setBrands] = useState<Brand[]>([]);
   const router = useRouter();
+
+  // ... بقیه کد ...
 
   // تابع handleSubmit برای تعاملات سمت کلاینت تعریف شده است
   const handleSubmit = () => {
@@ -24,7 +34,8 @@ export default function StepFourPage() {
     try {
       const response = await fetch("/api/brands"); // مسیر API برای دریافت داده‌ها از جدول 'brands'
       if (response.ok) {
-        const data = await response.json();
+        // داده‌های دریافتی به طور خودکار به نوع Brand[] اختصاص می‌یابد
+        const data: Brand[] = await response.json();
         setBrands(data); // ذخیره داده‌های برندها
       } else {
         console.error("خطا در دریافت داده‌ها");

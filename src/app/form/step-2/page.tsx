@@ -4,19 +4,15 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SocialMediaSection } from "@/components/Social Media Links/Social Media Links";
 
-// نوع داده برای مدیریت لینک‌های شبکه‌های اجتماعی
 interface SocialLinks {
   instagram: string;
   linkedin: string;
   website: string;
-  // می‌توانید فیلدهای بیشتری مانند twitter، facebook و... را اینجا اضافه کنید
 }
 
 export default function StepTwoPage() {
-  // تغییر نام state از 'text' به 'description' برای وضوح بیشتر
   const [description, setDescription] = useState("");
 
-  // 💡 افزودنی: State برای نگهداری داده‌های Social Media Section
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({
     instagram: "",
     linkedin: "",
@@ -25,21 +21,16 @@ export default function StepTwoPage() {
 
   const router = useRouter();
 
-  // ==========================================================
-  // 💡 افزودنی ۱: بازیابی داده‌ها از Local Storage (هنگام بارگذاری صفحه)
-  // ==========================================================
   useEffect(() => {
     const savedData = localStorage.getItem("formStep2Data");
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData);
 
-        // بازیابی Description
         if (parsedData.description) {
           setDescription(parsedData.description);
         }
 
-        // بازیابی Social Links
         if (parsedData.socialLinks) {
           setSocialLinks(parsedData.socialLinks);
         }
@@ -49,7 +40,6 @@ export default function StepTwoPage() {
       }
     }
   }, []);
-  // ==========================================================
 
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -57,8 +47,6 @@ export default function StepTwoPage() {
     setDescription(e.target.value);
   };
 
-  // 💡 افزودنی: تابع موقتی برای مدیریت تغییرات در Social Links
-  // این تابع باید به عنوان `prop` به SocialMediaSection ارسال شود.
   const handleSocialLinkChange = useCallback(
     (name: keyof SocialLinks, value: string) => {
       setSocialLinks((prev) => ({
@@ -69,9 +57,6 @@ export default function StepTwoPage() {
     []
   );
 
-  // ==========================================================
-  // 💡 افزودنی ۲: ذخیره داده‌ها در Local Storage (هنگام ادامه)
-  // ==========================================================
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -80,13 +65,11 @@ export default function StepTwoPage() {
         return;
       }
 
-      // ۱. جمع‌آوری تمام داده‌ها
       const allStep2Data = {
         description: description,
         socialLinks: socialLinks,
       };
 
-      // ۲. ذخیره داده‌های فرم ۲ در Local Storage
       try {
         localStorage.setItem("formStep2Data", JSON.stringify(allStep2Data));
         console.log("Form 2 data saved to Local Storage:", allStep2Data);
@@ -101,7 +84,6 @@ export default function StepTwoPage() {
     },
     [description, socialLinks, router]
   );
-  // ==========================================================
 
   return (
     <form onSubmit={handleSubmit}>
@@ -113,14 +95,13 @@ export default function StepTwoPage() {
           Description
         </label>
         <textarea
-          value={description} // استفاده از description
-          onChange={handleDescriptionChange} // استفاده از handleDescriptionChange
+          value={description}
+          onChange={handleDescriptionChange}
           className="w-full border border-gray-300 rounded-lg shadow-sm p-3 mt-2"
           rows={5}
           placeholder="Enter your text here"
         />
         <p className="mt-2 text-gray-500">{description.length} characters</p>
-        {/* استفاده از description.length */}
 
         <div className="mb-6">
           <label className="block text-xl font-medium text-[#505050S] mb-1">
@@ -131,21 +112,6 @@ export default function StepTwoPage() {
             find you faster
           </p>
 
-          {/* بخش Social Media Section: 
-                        **توجه:** اگر SocialMediaSection کامپوننت خارجی شماست، 
-                        باید اطمینان حاصل کنید که تغییرات را با استفاده از prop به 
-                        handleSocialLinkChange ارسال می‌کند.
-                        برای نمونه، یک فیلد ساده در اینجا اضافه می‌کنم تا نشان دهم 
-                        چگونه داده‌های socialLinks مدیریت می‌شوند.
-                    */}
-
-          {/* <SocialMediaSection 
-                         socialLinks={socialLinks} 
-                         onLinkChange={handleSocialLinkChange} 
-                    /> */}
-
-          {/* فیلد نمونه: Website URL */}
-
           <SocialMediaSection />
         </div>
 
@@ -153,7 +119,7 @@ export default function StepTwoPage() {
           <button
             type="submit"
             className="bg-[#644FC1] hover:bg-[#523FA0] text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-150 ease-in-out disabled:opacity-50 w-full md:w-auto"
-            disabled={!description.trim()} // استفاده از description.trim()
+            disabled={!description.trim()}
           >
             Continue
           </button>
