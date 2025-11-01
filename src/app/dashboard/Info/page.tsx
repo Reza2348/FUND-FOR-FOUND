@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { HiX } from "react-icons/hi";
-// ✅ وارد کردن SocialMediaSection و اینترفیس SocialLink برای تعریف State
+
 import {
   SocialMediaSection,
   SocialLink,
@@ -19,7 +19,6 @@ export default function InfoPage() {
   const [projectCategory, setProjectCategory] = useState("Product design");
   const [projectSubcategory, setProjectSubcategory] = useState("design");
 
-  // ✅ تعریف State برای لینک‌های شبکه‌های اجتماعی (باگ اصلی اینجا بود که رفع شد)
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
     { type: "Instagram", url: "" },
     { type: "LinkedIn", url: "" },
@@ -156,7 +155,6 @@ export default function InfoPage() {
           ))}
         </div>
       </div>
-      {/* ✅ ارسال Propsهای مورد نیاز */}
       <div className="mb-6">
         <SocialMediaSection
           socialLinks={socialLinks}

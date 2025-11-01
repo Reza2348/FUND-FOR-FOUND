@@ -30,7 +30,7 @@ const sections: Section[] = [
     iconMobile: FaGear,
     hasArrow: true,
   },
-  { id: "/info", label: "Info" },
+  { id: "/Info", label: "Info" },
   { id: "/contribution-tiers", label: "Contribution tiers" },
   { id: "/about", label: "About" },
   { id: "/team", label: "Team" },
