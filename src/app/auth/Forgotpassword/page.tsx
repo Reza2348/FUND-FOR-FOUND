@@ -1,8 +1,6 @@
-// ./src/app/auth/Forgotpassword/page.tsx
 "use client";
 
 import React from "react";
-// import { useRouter } from "next/navigation"; // <-- حذف شد: useRouter دیگر استفاده نمی‌شود
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -32,7 +30,6 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword() {
-  // const router = useRouter(); // <-- خط 34 حذف شد: متغیر بلااستفاده
   const {
     register,
     handleSubmit,
@@ -57,9 +54,7 @@ export default function ForgotPassword() {
         );
         error = emailError;
       } else {
-        toast.error(
-          "Password reset via mobile number is not currently supported. Please use email."
-        );
+        toast.error("Sent to email");
         return;
       }
 
@@ -78,7 +73,7 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
       <div className="max-w-md w-full p-8 rounded-lg  flex flex-col items-center">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-center items-center h-full">
           <CiLock size={70} className="text-[#D7CFF9]" />
         </div>
 
@@ -101,13 +96,15 @@ export default function ForgotPassword() {
             >
               Mobile number or email address
             </label>
+
             <input
               id="emailOrPhone"
               type="text"
               {...register("emailOrPhone")}
-              placeholder="youremail@yahoo.com or 0912326578"
-              className="w-full border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500 p-2"
+              placeholder="example@email.com / 0912345678"
+              className="w-full border border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500 p-2 text-sm placeholder:text-gray-400 placeholder:text-[13px] sm:placeholder:text-[14px]"
             />
+
             {errors.emailOrPhone && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.emailOrPhone.message}
@@ -134,18 +131,20 @@ export default function ForgotPassword() {
           <span className="w-full border-b border-gray-300"></span>
         </div>
 
-        <Link
-          href="/auth/signup"
-          className="text-sm font-medium text-purple-600 hover:text-purple-500"
-        >
-          Create an account
-        </Link>
-        <Link
-          href="/auth/login"
-          className="text-sm text-gray-500 hover:text-gray-700 mt-2"
-        >
-          back to login
-        </Link>
+        <div className="text-center flex flex-col items-center">
+          <Link
+            href="/auth/signup"
+            className="text-sm font-medium text-purple-600 hover:text-purple-500 mb-2"
+          >
+            Create an account
+          </Link>
+          <Link
+            href="/auth/login"
+            className="text-sm text-gray-500 hover:text-gray-700"
+          >
+            back to login
+          </Link>
+        </div>
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>

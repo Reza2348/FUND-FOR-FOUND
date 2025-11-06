@@ -7,6 +7,7 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
+import { FaGoogle } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
@@ -36,6 +37,7 @@ export default function SignUpPage() {
     try {
       const { email, password, firstName, lastName } = data;
 
+      // ثبت نام بدون نیاز به تایید ایمیل
       const { data: signUpData, error: authError } = await supabase.auth.signUp(
         {
           email,
@@ -52,13 +54,7 @@ export default function SignUpPage() {
       if (authError) throw authError;
 
       const user = signUpData.user;
-
-      if (!user) {
-        toast.info(
-          "A confirmation link has been sent to your email. Please check your inbox."
-        );
-        return;
-      }
+      if (!user) throw new Error("Signup failed. User not created.");
 
       const { error: profileError } = await supabase.from("profiles").insert([
         {
@@ -71,13 +67,9 @@ export default function SignUpPage() {
 
       if (profileError) throw profileError;
 
-      toast.success(
-        "Registration successful! Please check your email to confirm your account."
-      );
+      toast.success("Registration successful! You can now login.");
 
-      setTimeout(() => {
-        router.push("/auth/check-email");
-      }, 1500);
+      router.push("/");
     } catch (err) {
       console.error("Signup error:", err);
       const errorMessage =
@@ -110,6 +102,7 @@ export default function SignUpPage() {
 
         <GoogleLoginComponent className="w-full border border-gray-300 bg-gray-50 text-gray-700 py-3 rounded-md mt-8 hover:bg-gray-100 transition-colors flex justify-center items-center cursor-pointer">
           <div className="flex items-center space-x-2">
+            <FaGoogle className="w-5 h-5 mr-2" />
             <span>Continue with google</span>
           </div>
         </GoogleLoginComponent>
@@ -133,7 +126,6 @@ export default function SignUpPage() {
               type="text"
               {...register("firstName")}
               className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
-              style={{ padding: "10px 12px" }}
             />
             {errors.firstName && (
               <p className="text-red-500 text-xs mt-1">
@@ -154,7 +146,6 @@ export default function SignUpPage() {
               type="text"
               {...register("lastName")}
               className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
-              style={{ padding: "10px 12px" }}
             />
             {errors.lastName && (
               <p className="text-red-500 text-xs mt-1">
@@ -170,13 +161,12 @@ export default function SignUpPage() {
             <input
               id="email"
               type="email"
-              placeholder="e.g. yourname@yahoo.com"
+              placeholder="e.g yourname@yahoo.com"
               {...register("email")}
               className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
-              style={{ padding: "10px 12px" }}
             />
-            <p className="text-gray-500 text-xs mt-1">
-              We will send a confirmation link to your email.
+            <p className="text-[#644FC1]">
+              We will send you 6 digit cod to your email
             </p>
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">
@@ -184,6 +174,7 @@ export default function SignUpPage() {
               </p>
             )}
           </div>
+
           <div>
             <label
               htmlFor="password"
@@ -196,7 +187,6 @@ export default function SignUpPage() {
               type="password"
               {...register("password")}
               className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
-              style={{ padding: "10px 12px" }}
             />
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">

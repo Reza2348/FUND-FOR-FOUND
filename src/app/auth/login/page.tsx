@@ -105,27 +105,33 @@ export default function LoginPage() {
             )}
           </div>
           <div className="relative">
-            <p>Password</p>
-            <label htmlFor="password" className="sr-only">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Password
             </label>
+
             <input
               id="password"
               type={showPassword ? "text" : "password"}
               {...register("password")}
-              placeholder="Password"
-              className="w-full border px-3 py-3 rounded-md focus:ring-purple-500 focus:border-purple-500"
+              placeholder="Enter your password"
+              className="w-full border px-3 py-3 rounded-md focus:ring-purple-500 focus:border-purple-500 pr-10"
             />
+
             <FaEye
-              className="w-5 h-5 text-gray-400 cursor-pointer absolute right-3 top-2/3 transform -translate-y-1/2"
+              className="w-5 h-5 text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2"
               onClick={() => setShowPassword(!showPassword)}
             />
+
             <Link
               href="/auth/Forgotpassword"
-              className="text-xs text-purple-700 hover:underline mt-1 block"
+              className="text-xs text-purple-700 hover:underline mt-2 inline-block"
             >
               Forgot your password?
             </Link>
+
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.password.message}
