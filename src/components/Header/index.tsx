@@ -76,6 +76,7 @@ const Header: React.FC = () => {
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const searchBarRef = useRef<HTMLDivElement | null>(null);
 
+  // تعیین لینک فعال
   useEffect(() => {
     const currentPath = pathname || "/";
     let foundActiveLink = "";
@@ -96,24 +97,24 @@ const Header: React.FC = () => {
     setActiveLink(foundActiveLink);
   }, [pathname]);
 
+  // بستن منو و سرچ هنگام تغییر مسیر
   useEffect(() => {
     setIsMenuOpen(false);
     setIsSearchOpen(false);
   }, [pathname]);
 
-  // ---- fetch user و listener با fallback امن ----
+  // دریافت کاربر فعلی
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session?.user) {
-        const u = data.session.user;
         const username =
-          u.user_metadata?.username || u.email?.split("@")[0] || "User";
-        setUser({
-          id: u.id,
-          username,
-          email: u.email || "",
-        });
+          (data.session.user.user_metadata?.username as string) ||
+          data.session.user.email?.split("@")[0] ||
+          "US";
+        const id = data.session.user.id;
+        const email = data.session.user.email || "";
+        setUser({ id, username, email });
       } else {
         setUser(null);
       }
@@ -124,14 +125,13 @@ const Header: React.FC = () => {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (session?.user) {
-          const u = session.user;
           const username =
-            u.user_metadata?.username || u.email?.split("@")[0] || "User";
-          setUser({
-            id: u.id,
-            username,
-            email: u.email || "",
-          });
+            (session.user.user_metadata?.username as string) ||
+            session.user.email?.split("@")[0] ||
+            "US";
+          const id = session.user.id;
+          const email = session.user.email || "";
+          setUser({ id, username, email });
         } else {
           setUser(null);
         }
@@ -141,8 +141,9 @@ const Header: React.FC = () => {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  // بستن منوها با کلیک خارج
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    function handleClickOutside(event: MouseEvent) {
       if (
         userMenuRef.current &&
         !userMenuRef.current.contains(event.target as Node)
@@ -167,13 +168,13 @@ const Header: React.FC = () => {
       ) {
         setIsSearchOpen(false);
       }
-    };
+    }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMenuOpen, isSearchOpen]);
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     await supabase.auth.signOut();
     setIsUserMenuOpen(false);
     router.push("/");
@@ -194,6 +195,7 @@ const Header: React.FC = () => {
   return (
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
+        {/* Logo */}
         <div className="flex items-center gap-2">
           <Link href="/">
             <Image
@@ -206,6 +208,7 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
+        {/* Desktop Nav */}
         <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10 lg:ml-[106px]">
           {NAV_LINKS.map((link) => (
             <Link
@@ -223,6 +226,7 @@ const Header: React.FC = () => {
           ))}
         </div>
 
+        {/* Desktop User / Search */}
         <div className="hidden md:flex items-center gap-3 lg:gap-4 mt-2 md:mt-0">
           <div className="relative">
             <HiSearch
@@ -242,18 +246,19 @@ const Header: React.FC = () => {
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="w-10 h-10 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full cursor-pointer select-none transition flex items-center justify-center text-base"
               >
-                {user.username.substring(0, 2).toUpperCase()}
+                {user.username?.substring(0, 2).toUpperCase() ||
+                  user.email.substring(0, 2).toUpperCase()}
               </div>
-
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-72 bg-white shadow-xl rounded-xl p-3 z-50">
+                  {/* User info */}
                   <div className="flex items-start gap-3 pb-3 border-b border-gray-100">
                     <div className="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center shrink-0">
                       <CgProfile size={24} className="text-purple-600" />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="font-semibold text-gray-800 whitespace-nowrap overflow-hidden text-ellipsis">
-                        {user.username}
+                        {user.username || user.email}
                       </span>
                       <span className="text-sm text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis">
                         {user.email}
@@ -267,6 +272,7 @@ const Header: React.FC = () => {
                     </button>
                   </div>
 
+                  {/* Menu */}
                   <nav className="pt-3 flex flex-col gap-1">
                     <MenuItem
                       icon={<CgProfile size={20} className="text-gray-600" />}
@@ -274,29 +280,12 @@ const Header: React.FC = () => {
                       href={`/dashboard`}
                       onClick={() => setIsUserMenuOpen(false)}
                     />
-                    <div className="flex justify-between items-center py-2 px-3 hover:bg-gray-50 rounded-lg cursor-pointer transition">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-6 flex items-center justify-center">
-                          <BiBriefcase size={20} className="text-gray-600" />
-                        </div>
-                        <span className="text-gray-700 font-medium whitespace-nowrap overflow-hidden text-ellipsis block min-w-0">
-                          My brands and organisations
-                        </span>
-                      </div>
-                      <div className="text-gray-400 font-bold text-lg leading-none border border-gray-300 rounded-full w-6 h-6 flex items-center justify-center">
-                        +
-                      </div>
-                    </div>
-                    <Link
-                      href="#"
-                      className="flex items-center gap-3 pl-12 py-1 text-sm text-purple-600 cursor-pointer hover:bg-purple-50 rounded-lg transition"
+                    <MenuItem
+                      icon={<BiBriefcase size={20} className="text-gray-600" />}
+                      label="My brands and organisations"
+                      href="/brands"
                       onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      <div className="w-5 h-5 flex items-center justify-center rounded-full bg-purple-100 font-bold text-xs">
-                        W
-                      </div>
-                      <span className="font-medium">Wish work</span>
-                    </Link>
+                    />
                     <MenuItem
                       icon={
                         <IoSettingsOutline
@@ -304,7 +293,7 @@ const Header: React.FC = () => {
                           className="text-gray-600"
                         />
                       }
-                      label="Setting"
+                      label="Settings"
                       href="/settings"
                       onClick={() => setIsUserMenuOpen(false)}
                     />
@@ -336,18 +325,21 @@ const Header: React.FC = () => {
           )}
         </div>
 
+        {/* Mobile */}
         <div className="md:hidden flex items-center gap-3">
           <HiSearch
             size={24}
             className="text-gray-700 cursor-pointer"
             onClick={toggleSearch}
           />
+
           {user ? (
             <div
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
               className="w-8 h-8 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full cursor-pointer select-none transition flex items-center justify-center text-sm"
             >
-              {user.username.substring(0, 2).toUpperCase()}
+              {user.username?.substring(0, 2).toUpperCase() ||
+                user.email.substring(0, 2).toUpperCase()}
             </div>
           ) : (
             <Link
@@ -358,13 +350,126 @@ const Header: React.FC = () => {
               <CgProfile size={20} />
             </Link>
           )}
+
           <button onClick={toggleMenu} className="text-gray-700">
             {isMenuOpen ? <HiX size={26} /> : <HiMenu size={26} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile search & menu ... باقی کد مشابه قبل */}
+      {/* Mobile Search */}
+      {isSearchOpen && (
+        <div
+          ref={searchBarRef}
+          className="md:hidden px-4 pb-3 pt-1 border-b border-gray-200 bg-white"
+        >
+          <div className="relative">
+            <HiSearch
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={20}
+            />
+            <input
+              type="text"
+              placeholder="Search brand, category, tag or..."
+              className="w-full border border-gray-300 rounded-xl pl-10 pr-10 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#5b4bff] transition-all"
+            />
+            <button
+              onClick={() => setIsSearchOpen(false)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1"
+            >
+              <HiX size={20} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div
+          ref={mobileMenuRef}
+          className="md:hidden fixed inset-0 bg-white z-40 p-4"
+        >
+          <div className="flex justify-between items-center h-16 border-b border-gray-200 mb-6">
+            <Link href="/" onClick={() => setIsMenuOpen(false)}>
+              <Image src="/Vector.svg" alt="logo" width={25} height={20} />
+            </Link>
+            <div className="flex items-center gap-4">
+              <HiSearch
+                size={24}
+                className="text-gray-700 cursor-pointer"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setIsSearchOpen(true);
+                }}
+              />
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="text-gray-700"
+              >
+                <HiX size={26} />
+              </button>
+            </div>
+          </div>
+
+          <nav className="flex flex-col gap-1 border-b border-gray-200 pb-8">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => {
+                  setActiveLink(link.href);
+                  setIsMenuOpen(false);
+                }}
+                className={`flex justify-between items-center text-lg font-medium py-3 px-2 rounded-lg transition ${
+                  activeLink === link.href
+                    ? "text-[#5b4bff] bg-[#f2f0ff]"
+                    : "text-gray-800 hover:bg-gray-50"
+                }`}
+              >
+                {link.label}
+                <HiArrowRight size={20} className="text-gray-400" />
+              </Link>
+            ))}
+          </nav>
+
+          {!user && (
+            <div className="absolute bottom-4 left-0 right-0 px-4 flex flex-col gap-3">
+              <Link
+                href="/auth/login"
+                className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login/signup
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="px-4 py-3 bg-[#5b4bff] text-white rounded-xl text-base font-medium hover:bg-[#493ae0] transition inline-block text-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Start
+              </Link>
+            </div>
+          )}
+
+          {user && (
+            <div className="absolute bottom-4 left-0 right-0 px-4 flex flex-col gap-3">
+              <Link
+                href="/dashboard"
+                className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                My Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-3 bg-red-50 text-red-600 rounded-xl text-base font-medium transition inline-block text-center hover:bg-red-100"
+              >
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   );
 };
