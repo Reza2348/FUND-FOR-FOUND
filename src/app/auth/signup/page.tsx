@@ -1,4 +1,3 @@
-// src/app/auth/signup/page.tsx
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -7,10 +6,12 @@ import * as z from "zod";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
-import { FaGoogle } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
+import { useSignup } from "@/mutations/useSignup";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
+import { FaGoogle, FaEye } from "react-icons/fa";
+import { useState, useRef, useEffect } from "react";
 import GoogleLoginComponent from "@/components/GoogleLoginComponent/GoogleLoginComponent";
 
 const signUpSchema = z.object({
@@ -24,6 +25,8 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const {
     register,
@@ -37,7 +40,6 @@ export default function SignUpPage() {
     try {
       const { email, password, firstName, lastName } = data;
 
-      // ثبت نام بدون نیاز به تایید ایمیل
       const { data: signUpData, error: authError } = await supabase.auth.signUp(
         {
           email,
@@ -55,7 +57,6 @@ export default function SignUpPage() {
 
       const user = signUpData.user;
       if (!user) throw new Error("Signup failed. User not created.");
-
       const { error: profileError } = await supabase.from("profiles").insert([
         {
           user_id: user.id,
@@ -65,18 +66,25 @@ export default function SignUpPage() {
         },
       ]);
 
-      if (profileError) throw profileError;
+      if (profileError)
+        throw new Error("Failed to create profile. " + profileError.message);
 
-      toast.success("Registration successful! You can now login.");
+      toast.success("Registration successful!");
 
-      router.push("/");
+      timerRef.current = setTimeout(() => router.push("/"), 2000);
     } catch (err) {
       console.error("Signup error:", err);
       const errorMessage =
-        err instanceof Error ? err.message : "خطای ناشناخته رخ داد";
+        err instanceof Error ? err.message : "An unknown error occurred.";
       toast.error(errorMessage);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen flex items-start justify-center pt-16 bg-white">
@@ -100,10 +108,11 @@ export default function SignUpPage() {
           </div>
         </div>
 
+        {/* Google Login */}
         <GoogleLoginComponent className="w-full border border-gray-300 bg-gray-50 text-gray-700 py-3 rounded-md mt-8 hover:bg-gray-100 transition-colors flex justify-center items-center cursor-pointer">
           <div className="flex items-center space-x-2">
             <FaGoogle className="w-5 h-5 mr-2" />
-            <span>Continue with google</span>
+            <span>Continue with Google</span>
           </div>
         </GoogleLoginComponent>
 
@@ -125,6 +134,7 @@ export default function SignUpPage() {
               id="firstName"
               type="text"
               {...register("firstName")}
+              placeholder="Enter your first name"
               className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
             />
             {errors.firstName && (
@@ -145,6 +155,7 @@ export default function SignUpPage() {
               id="lastName"
               type="text"
               {...register("lastName")}
+              placeholder="Enter your last name"
               className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
             />
             {errors.lastName && (
@@ -161,12 +172,12 @@ export default function SignUpPage() {
             <input
               id="email"
               type="email"
-              placeholder="e.g yourname@yahoo.com"
+              placeholder="yourname@example.com"
               {...register("email")}
               className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
             />
-            <p className="text-[#644FC1]">
-              We will send you 6 digit cod to your email
+            <p className="text-[#644FC1] text-xs mt-1">
+              We will send you a 6-digit code to your email
             </p>
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">
@@ -175,7 +186,7 @@ export default function SignUpPage() {
             )}
           </div>
 
-          <div>
+          <div className="relative">
             <label
               htmlFor="password"
               className="block text-sm font-medium mb-1"
@@ -184,9 +195,16 @@ export default function SignUpPage() {
             </label>
             <input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               {...register("password")}
-              className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
+              placeholder="Enter your password"
+              className="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500 pr-10"
+            />
+            <FaEye
+              className={`w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer mt-[11px] ${
+                showPassword ? "text-gray-400" : "text-gray-400"
+              }`}
+              onClick={() => setShowPassword(!showPassword)}
             />
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">
@@ -203,6 +221,7 @@ export default function SignUpPage() {
                 ? "bg-purple-400 cursor-not-allowed"
                 : "bg-purple-700 hover:bg-purple-800"
             }`}
+            onClick={(e) => isSubmitting && e.preventDefault()}
           >
             {isSubmitting ? "Signing up..." : "Continue"}
           </button>
@@ -219,7 +238,7 @@ export default function SignUpPage() {
         </p>
       </div>
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 }

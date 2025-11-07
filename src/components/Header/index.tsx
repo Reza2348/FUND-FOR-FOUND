@@ -202,7 +202,7 @@ const Header: React.FC = () => {
               src="/Vector.svg"
               alt="logo"
               width={25}
-              height={20}
+              height={25}
               priority
             />
           </Link>
@@ -391,7 +391,16 @@ const Header: React.FC = () => {
         >
           <div className="flex justify-between items-center h-16 border-b border-gray-200 mb-6">
             <Link href="/" onClick={() => setIsMenuOpen(false)}>
-              <Image src="/Vector.svg" alt="logo" width={25} height={20} />
+              <div className="flex justify-center items-center h-20">
+                <Image
+                  src="/Vector.svg"
+                  alt="logo"
+                  width={40} // مقدار اصلی
+                  height={40} // مقدار اصلی
+                  className="w-auto h-10" // تغییر ارتفاع، ولی نسبت حفظ می‌شود
+                  priority
+                />
+              </div>
             </Link>
             <div className="flex items-center gap-4">
               <HiSearch

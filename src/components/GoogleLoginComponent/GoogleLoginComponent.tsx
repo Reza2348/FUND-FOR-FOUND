@@ -16,23 +16,23 @@ const GoogleLoginComponent: React.FC<GoogleLoginComponentProps> = ({
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:3000/dashboard",
+          redirectTo: "http://localhost:3000",
         },
       });
 
       if (error) {
-        console.error("خطا در شروع ورود با گوگل:", error.message);
-        alert("خطا در ورود: " + error.message);
+        console.error("Error starting Google login:", error.message);
+        alert("Login error:" + error.message);
       } else {
-        console.log("درخواست ورود با گوگل با موفقیت ارسال شد.");
+        console.log("Google login request sent successfully.");
       }
     } catch (err) {
       if (err instanceof Error) {
-        console.error("خطای غیرمنتظره:", err.message);
-        alert("خطای غیرمنتظره در ورود: " + err.message);
+        console.error("Unexpected error:", err.message);
+        alert("Unexpected error while logging in:" + err.message);
       } else {
-        console.error("خطای غیرمنتظره:", err);
-        alert("خطای ناشناخته در ورود");
+        console.error("Unexpected error::", err);
+        alert("Unknown error during login");
       }
     }
   };
