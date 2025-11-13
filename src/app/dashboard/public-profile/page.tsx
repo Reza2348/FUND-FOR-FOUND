@@ -1,7 +1,7 @@
 import React from "react";
 
-const Page = () => {
-  return <div>bvsmndvbsmnbvasbdvnbsdnmvbsmn</div>;
+const PublicProfile = () => {
+  return <div>این پروفایل عمومی است</div>;
 };
 
-export default Page;
+export default PublicProfile;

@@ -1,22 +1,17 @@
 "use client";
-// 💡 وارد کردن تایپ‌های لازم از React: FC یا React.FC
 import React, { useState, FC } from "react";
-// فرض می‌کنیم Modal به درستی با تایپ‌ها تعریف شده است
+import { IoAdd } from "react-icons/io5";
 import Modal from "@/components/Modal/Modal";
 
-// 💡 تعریف کامپوننت با تایپ FC (Function Component)
 const Page: FC = () => {
   const PRIMARY_PURPLE: string = "#644FC1";
 
-  // ⭐ 2. تعریف State برای مدیریت وضعیت مودال (TypeScript به طور خودکار تایپ boolean را تشخیص می‌دهد)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // ⭐ 3. تابع برای باز کردن مودال (TypeScript به طور خودکار تایپ void را تشخیص می‌دهد)
   const openModal = (): void => {
     setIsModalOpen(true);
   };
 
-  // ⭐ 4. تابع برای بستن مودال (TypeScript به طور خودکار تایپ void را تشخیص می‌دهد)
   const closeModal = (): void => {
     setIsModalOpen(false);
   };
@@ -31,19 +26,17 @@ const Page: FC = () => {
           Contribution Tier
         </h2>
       </div>
-      <p className="text-[#444444] mb-2.5 lg:ml-[72px]">
+      <p className="text-[#444444] mb-2.5 lg:ml-[10px]">
         Most creators offer 3-6 reward tiers, which can be physical items or
         special experiences. Make sure to set reasonable contributor
         expectations.
       </p>
-      <p className="text-[#444444] lg:ml-[72px] mb-8">
+      <p className="text-[#444444] lg:ml-[10px] mb-8">
         Remember each contributor can choose a recurring or one-time payment.
       </p>
 
-      <div className="lg:ml-[72px] lg:w-2xl">
+      <div className="lg:ml-[10px] lg:w-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* ... سایر Tierها (بدون تغییر) ... */}
-          {/* Tier Donation */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             <div className={`bg-[${PRIMARY_PURPLE}] p-4`}>
               <h3 className="text-xl font-semibold text-white text-center">
@@ -70,7 +63,7 @@ const Page: FC = () => {
               </button>
             </div>
           </div>
-          {/* Tier Supporter */}
+
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             <div className={`bg-[${PRIMARY_PURPLE}] p-4`}>
               <h3 className="text-xl font-semibold text-white text-center">
@@ -100,7 +93,7 @@ const Page: FC = () => {
               </button>
             </div>
           </div>
-          {/* Tier Silver Sponsor */}
+
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             <div className={`bg-[${PRIMARY_PURPLE}] p-4`}>
               <h3 className="text-xl font-semibold text-white text-center">
@@ -133,7 +126,6 @@ const Page: FC = () => {
             </div>
           </div>
 
-          {/* Tier Add Tier (با دکمه و مودال) */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             <div className={`bg-[${PRIMARY_PURPLE}] p-4`}>
               <h3 className="text-xl font-semibold text-white text-center"></h3>
@@ -143,12 +135,11 @@ const Page: FC = () => {
                 Add Tier
               </p>
               <div className="flex flex-col items-center justify-center h-full min-h-[300px]">
-                {/* دکمه */}
                 <button
-                  className="bg-[#644FC1] rounded-2xl w-[90px] h-[90px] flex items-center justify-center text-white text-6xl font-light"
-                  onClick={openModal} // فراخوانی تابع باز کردن مودال
+                  className="w-20 h-20 bg-purple-600 text-white rounded-xl flex items-center justify-center transition-transform duration-200 hover:scale-105"
+                  onClick={openModal}
                 >
-                  +
+                  <IoAdd size={45} />
                 </button>
               </div>
             </div>

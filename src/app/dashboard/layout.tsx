@@ -1,4 +1,3 @@
-// app/dashboard/layout.tsx
 "use client";
 import React, { PropsWithChildren, useState } from "react";
 import Sidebar from "@/components/Sidebar/Sidebar";

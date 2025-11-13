@@ -195,7 +195,6 @@ const Header: React.FC = () => {
   return (
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
-        {/* Logo */}
         <div className="flex items-center gap-2">
           <Link href="/">
             <Image
@@ -208,7 +207,6 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        {/* Desktop Nav */}
         <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10 lg:ml-[106px]">
           {NAV_LINKS.map((link) => (
             <Link
@@ -226,7 +224,6 @@ const Header: React.FC = () => {
           ))}
         </div>
 
-        {/* Desktop User / Search */}
         <div className="hidden md:flex items-center gap-3 lg:gap-4 mt-2 md:mt-0">
           <div className="relative">
             <HiSearch
@@ -251,7 +248,6 @@ const Header: React.FC = () => {
               </div>
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-72 bg-white shadow-xl rounded-xl p-3 z-50">
-                  {/* User info */}
                   <div className="flex items-start gap-3 pb-3 border-b border-gray-100">
                     <div className="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center shrink-0">
                       <CgProfile size={24} className="text-purple-600" />
@@ -272,7 +268,6 @@ const Header: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Menu */}
                   <nav className="pt-3 flex flex-col gap-1">
                     <MenuItem
                       icon={<CgProfile size={20} className="text-gray-600" />}
@@ -324,40 +319,17 @@ const Header: React.FC = () => {
             </div>
           )}
         </div>
-
-        {/* Mobile */}
         <div className="md:hidden flex items-center gap-3">
           <HiSearch
             size={24}
             className="text-gray-700 cursor-pointer"
             onClick={toggleSearch}
           />
-
-          {user ? (
-            <div
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="w-8 h-8 bg-[#eae8fb] text-[#5b4bff] font-semibold rounded-full cursor-pointer select-none transition flex items-center justify-center text-sm"
-            >
-              {user.username?.substring(0, 2).toUpperCase() ||
-                user.email.substring(0, 2).toUpperCase()}
-            </div>
-          ) : (
-            <Link
-              href="/auth/login"
-              className="w-8 h-8 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <CgProfile size={20} />
-            </Link>
-          )}
-
           <button onClick={toggleMenu} className="text-gray-700">
             {isMenuOpen ? <HiX size={26} /> : <HiMenu size={26} />}
           </button>
         </div>
       </div>
-
-      {/* Mobile Search */}
       {isSearchOpen && (
         <div
           ref={searchBarRef}
@@ -382,8 +354,6 @@ const Header: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div
           ref={mobileMenuRef}
@@ -395,9 +365,9 @@ const Header: React.FC = () => {
                 <Image
                   src="/Vector.svg"
                   alt="logo"
-                  width={40} // مقدار اصلی
-                  height={40} // مقدار اصلی
-                  className="w-auto h-10" // تغییر ارتفاع، ولی نسبت حفظ می‌شود
+                  width={40}
+                  height={40}
+                  className="w-auto h-10"
                   priority
                 />
               </div>
@@ -448,7 +418,7 @@ const Header: React.FC = () => {
                 className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Login/signup
+                Login
               </Link>
               <Link
                 href="/auth/signup"
