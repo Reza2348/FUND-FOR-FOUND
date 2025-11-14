@@ -18,16 +18,18 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
   onClose,
   onSave,
 }) => {
-  if (!isOpen) {
-    return null;
-  }
-
+  // 1. **Move useState to the top level**
   const [expenseData, setExpenseData] = useState<ExpenseData>({
     description: "",
     amount: "",
     date: new Date().toISOString().split("T")[0],
     category: "Food",
   });
+
+  // 2. The conditional return now comes after the hook call.
+  if (!isOpen) {
+    return null;
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -59,6 +61,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* ... rest of the modal JSX ... */}
       <div
         className="absolute inset-0 bg-gray-600/40 backdrop-blur-sm"
         onClick={onClose}
