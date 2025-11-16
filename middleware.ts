@@ -7,6 +7,10 @@ const publicPaths = ["/login", "/signup", "/"];
 // آدرس روت محافظت شده
 const protectedPath = "/dashboard";
 
+// 🚨🚨 تغییر بسیار مهم: نام کوکی را که در مرورگر (Developer Tools) خود پیدا کرده‌اید، جایگزین کنید.
+// این نام معمولاً شبیه: 'sb-qpgsjhfdbvxkzyxfbzzr-auth-token' است.
+const SUPABASE_AUTH_COOKIE_NAME = "sb-YOUR_ACTUAL_PROJECT_REF-auth-token";
+
 // مشخص کردن نوع پارامتر request به صورت NextRequest
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -16,11 +20,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next(); // اجازه دسترسی به مسیرهای عمومی
   }
 
-  // ۲. دریافت توکن از کوکی‌ها
-  // نام کوکی Supabase Auth در Next.js معمولاً با 'sb-' شروع می‌شود.
-  // در پروژه‌های Supabase با استفاده از nextjs-helpers، نام کوکی پیش‌فرض 'sb-access-token' نیست.
-  // اگر از nextjs-helpers استفاده می‌کنید، باید نام کوکی صحیح را پیدا کنید (معمولاً: my-app-auth-token).
-  const token = request.cookies.get("sb-access-token")?.value;
+  // ۲. دریافت توکن از کوکی‌ها با استفاده از نام صحیح
+  const token = request.cookies.get(SUPABASE_AUTH_COOKIE_NAME)?.value;
 
   // اگر کاربر در مسیرهای محافظت شده است:
   if (pathname.startsWith(protectedPath)) {
@@ -36,9 +37,6 @@ export async function middleware(request: NextRequest) {
     }
 
     // اگر توکن وجود دارد:
-    // ۴. (نکته): اعتبارسنجی کامل توکن (با استفاده از متدهای Supabase Server-side) در اینجا امن‌ترین حالت است
-    // اما چون Next.js Middleware در Edge Runtime اجرا می‌شود، ممکن است دسترسی به توابع Supabase کمی پیچیده‌تر باشد.
-
     return NextResponse.next(); // اجازه دسترسی به داشبورد
   }
 
