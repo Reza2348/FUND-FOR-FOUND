@@ -2,16 +2,14 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image"; // مطمئن شوید این ایمپورت کار می‌کند
+import Image from "next/image";
 
 export default function StepThreePage() {
-  // تغییر نام به StepThreePage برای وضوح
   const router = useRouter();
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      // این مرحله، کاربر را به فرم نهایی (فرم ۴) هدایت می‌کند
       router.push("/form/step-4");
     },
     [router]
@@ -23,8 +21,6 @@ export default function StepThreePage() {
         <h2 className="text-xl text-center font-semibold sm:text-2xl text-[#644FC1]">
           Detailed info
         </h2>
-
-        {/* <Image ... /> : نمایش تصویر */}
         <div className="flex justify-center">
           <Image
             src="/cardt.png.svg"
@@ -47,8 +43,6 @@ export default function StepThreePage() {
         </div>
 
         <div className="flex justify-center pt-6">
-          {" "}
-          {/* تغییر justify-start به justify-center */}
           <button
             type="submit"
             className="bg-[#644FC1] hover:bg-[#523FA0] text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-150 ease-in-out w-full md:w-auto"
