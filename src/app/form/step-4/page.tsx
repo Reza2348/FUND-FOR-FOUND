@@ -21,7 +21,8 @@ export default function StepThreePage() {
     <form onSubmit={handleSubmit}>
       <div className="space-y-1 sm:space-y-8 lg:w-fit justify-center lg:mx-auto">
         <h2 className="text-xl text-center font-semibold sm:text-2xl text-[#644FC1]">
-          Conratulation!
+          Congratulations!{" "}
+          {/* Corrected typo: Conratulation -> Congratulations */}
         </h2>
         <div className="flex justify-center">
           <Image
@@ -38,7 +39,8 @@ export default function StepThreePage() {
             Your creative Starter has approved by our experts!
           </label>
           <p className="text-[#505050] mb-5">
-            Welcome aboard! Let's dive in and get started
+            Welcome aboard! Let&apos;s dive in and get started{" "}
+            {/* Fixed error: ' -> &apos; */}
           </p>
         </div>
 

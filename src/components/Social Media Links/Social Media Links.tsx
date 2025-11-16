@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useCallback,
-  ReactNode,
-  useEffect,
-  useRef,
-} from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react"; // 🚀 FIX: ReactNode حذف شد
 import { HiX, HiPlus } from "react-icons/hi";
 import {
   FaInstagram,
@@ -50,16 +44,16 @@ interface SocialSelectProps {
   availableTypes: string[];
   usedTypes: string[]; // افزودن usedTypes برای فیلتر کردن
   updateType: (index: number, newType: string) => void;
-  // chidl: ReactNode; // این Prop حذف شد چون در SocialSelect استفاده نشده بود
 }
 
-const SocialSelect: React.FC<SocialSelectProps> = ({
+// 🚀 بهبود: استفاده از Functional Component ساده به جای React.FC
+const SocialSelect = ({
   link,
   index,
   availableTypes,
-  usedTypes, // دریافت usedTypes
+  usedTypes,
   updateType,
-}) => {
+}: SocialSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -122,13 +116,11 @@ const SocialSelect: React.FC<SocialSelectProps> = ({
 };
 
 // === تعریف کامپوننت SocialMediaSection اصلاح شده ===
-export const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
+// 🚀 بهبود: استفاده از Functional Component ساده به جای React.FC
+export const SocialMediaSection = ({
   socialLinks,
-  setSocialLinks, // دریافت Propsهای مدیریتی
-}) => {
-  // ❌ State داخلی socialLinks حذف شد
-
-  // ✅ فقط State مربوط به UI باقی می‌ماند
+  setSocialLinks,
+}: SocialMediaSectionProps) => {
   const [showSocialDropdown, setShowSocialDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -138,7 +130,6 @@ export const SocialMediaSection: React.FC<SocialMediaSectionProps> = ({
     (type) => !usedSocialTypes.includes(type)
   );
 
-  // توابع به‌روزرسانی که از setSocialLinks آمده از Props استفاده می‌کنند
   const removeSocialLink = (index: number) => {
     setSocialLinks((prevLinks) => prevLinks.filter((_, i) => i !== index));
   };

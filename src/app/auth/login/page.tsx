@@ -127,12 +127,19 @@ export default function LoginPage() {
               placeholder="Enter your password"
               className="w-full border px-3 py-3 rounded-md focus:ring-purple-500 focus:border-purple-500 pr-10"
             />
-            <FaEye
-              className={`w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${
-                showPassword ? "text-gray-400" : "text-gray-400"
-              }`}
-              onClick={() => setShowPassword(!showPassword)}
-            />
+
+            {/* 💡 منطق جدید برای رفع هشدار و پیاده‌سازی سوئیچ آیکون */}
+            {showPassword ? (
+              <FaEyeSlash
+                className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"
+                onClick={() => setShowPassword(false)}
+              />
+            ) : (
+              <FaEye
+                className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"
+                onClick={() => setShowPassword(true)}
+              />
+            )}
 
             <Link
               href="/auth/Forgotpassword"

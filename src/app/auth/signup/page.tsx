@@ -1,3 +1,4 @@
+// ./src/app/auth/signup/page.tsx
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -7,7 +8,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSignup } from "@/mutations/useSignup";
+// خط زیر حذف شده است: import { useSignup } from "@/mutations/useSignup";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { FaGoogle, FaEye } from "react-icons/fa";

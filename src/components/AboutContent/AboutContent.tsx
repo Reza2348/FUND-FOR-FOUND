@@ -7,20 +7,24 @@ export default function AboutContent() {
         <span className="w-3 h-3 bg-indigo-600 rounded-sm mr-2"></span>
         ABOUT
       </h3>
+
       <ul className="list-disc ml-6 space-y-3 text-gray-700">
         <li>
           Introduce yourself, your team (if you have) and your background.
         </li>
+
         <li>
           Briefly describe about the project long term and short term goal and
-          why it's important to you.
+          why **it&apos;s** important to you.
         </li>
+
         <li>
           Introduce yourself, your team (if you have) and your background.
         </li>
+
         <li>
           Briefly describe about the project long term and short term goal and
-          why it's important to you.
+          why **it&apos;s** important to you.
         </li>
       </ul>
     </div>
