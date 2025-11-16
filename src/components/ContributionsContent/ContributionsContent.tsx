@@ -1,16 +1,30 @@
 import React from "react";
+import Image from "next/image";
 
 export default function ContributionsContent() {
   return (
-    <div className="space-y-6">
+    // max-w-6xl و mx-auto برای مرکزیت بخش در صفحه دسکتاپ
+    <div className="max-w-6xl mx-auto px-4 space-y-6">
       <h3 className="text-xl font-semibold flex items-center mb-4 text-gray-800">
         <span className="w-3 h-3 bg-indigo-600 rounded-sm mr-2"></span>
         Contributions
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="w-2xs bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+
+      {/* 💥 اصلاح شده: اضافه شدن justify-center */}
+      {/* justify-center: کارت‌ها را در هر ستون به صورت افقی مرکز می‌کند */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:justify-items-center">
+        {/* کارت اول: wish work */}
+        {/* 💥 اصلاح شده: اضافه شدن max-w-xs (حدود 320 پیکسل) */}
+        <div className="max-w-xs bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
           <div className="h-28 bg-black flex justify-center items-center">
-            <h4 className="text-white text-3xl font-bold">Wish Work</h4>
+            <Image
+              src="/Clip path group2.svg"
+              alt="wish work logo"
+              width={40}
+              height={40}
+              className="w-auto h-10"
+              priority
+            />
           </div>
           <div className="p-4">
             <div className="flex justify-between items-start mb-2">
@@ -32,9 +46,19 @@ export default function ContributionsContent() {
             </div>
           </div>
         </div>
-        <div className="w-2xs bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+
+        {/* کارت دوم: Kelaasor */}
+        {/* 💥 اصلاح شده: اضافه شدن max-w-xs (حدود 320 پیکسل) */}
+        <div className="max-w-xs bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
           <div className="h-28 bg-[#00695C] flex justify-center items-center">
-            <h4 className="text-white text-3xl font-bold">کلاسور</h4>
+            <Image
+              src="/Vector (3).svg"
+              alt="Kelaasor logo"
+              width={40}
+              height={40}
+              className="w-auto h-10"
+              priority
+            />
           </div>
           <div className="p-4">
             <div className="flex justify-between items-start mb-2">

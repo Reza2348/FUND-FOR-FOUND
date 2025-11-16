@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddExpenseModal from "@/components/ExpenseModal/ExpenseModal";
 
 interface ExpenseItem {
@@ -203,19 +203,41 @@ const EditModal: React.FC<EditModalProps> = ({ expense, onClose, onSave }) => {
 };
 
 const ExpensesPage: React.FC = () => {
-  const [expenses, setExpenses] = useState<ExpenseItem[]>(initialExpensesData);
+  const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentEditItem, setCurrentEditItem] = useState<ExpenseItem | null>(
     null
   );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [nextId, setNextId] = useState(1);
 
-  let nextId = Math.max(...expenses.map((e) => e.id), 0) + 1;
+  // ✅ خواندن داده‌ها از localStorage بعد از mount
+  useEffect(() => {
+    const storedExpenses = localStorage.getItem("expenses");
+    if (storedExpenses) {
+      const parsed = JSON.parse(storedExpenses);
+      setExpenses(parsed);
+      const maxId = parsed.reduce(
+        (max: number, e: ExpenseItem) => Math.max(max, e.id),
+        0
+      );
+      setNextId(maxId + 1);
+    } else {
+      setExpenses(initialExpensesData);
+      setNextId(initialExpensesData.length + 1);
+    }
+  }, []);
+
+  // ✅ ذخیره در localStorage
+  const saveToLocalStorage = (expenses: ExpenseItem[]) => {
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+  };
 
   const handleDelete = (id: number) => {
     if (window.confirm("Are you sure you want to delete this transaction?")) {
       const updatedExpenses = expenses.filter((e) => e.id !== id);
       setExpenses(updatedExpenses);
+      saveToLocalStorage(updatedExpenses);
     }
   };
 
@@ -229,6 +251,7 @@ const ExpensesPage: React.FC = () => {
       e.id === editedExpense.id ? editedExpense : e
     );
     setExpenses(updatedExpenses);
+    saveToLocalStorage(updatedExpenses);
     setIsEditModalOpen(false);
     setCurrentEditItem(null);
   };
@@ -239,18 +262,18 @@ const ExpensesPage: React.FC = () => {
     const finalAmount =
       amountAsNumber * (newExpenseData.category === "Income" ? 1 : -1);
 
-    const newExpense: Omit<ExpenseItem, "id"> = {
+    const newExpense: ExpenseItem = {
       description: newExpenseData.description,
       category: newExpenseData.category,
       date: newExpenseData.date,
       amount: finalAmount,
+      id: nextId,
     };
 
-    const expenseWithId: ExpenseItem = {
-      ...newExpense,
-      id: nextId++,
-    };
-    setExpenses((prev) => [...prev, expenseWithId]);
+    const newExpensesList = [...expenses, newExpense];
+    setExpenses(newExpensesList);
+    saveToLocalStorage(newExpensesList);
+    setNextId(nextId + 1);
     setIsAddModalOpen(false);
   };
 

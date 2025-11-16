@@ -50,7 +50,6 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto lg:ml-3 mt-3 w-full sm:w-11/12 md:w-4/5 lg:w-5xl xl:w-6xl bg-white shadow-xl rounded-lg overflow-hidden">
-      {/* Header */}
       <header
         className="relative text-white pt-6 px-6 h-[160px] sm:h-48 lg:h-64"
         style={{

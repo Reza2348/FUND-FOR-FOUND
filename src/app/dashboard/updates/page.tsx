@@ -116,7 +116,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
       <div className="flex items-start justify-between">
         <div className="flex items-start w-full">
           <div
-            className={`w-10  h-10 rounded-lg bg-gray-200  mr-4 flex-shrink-0 flex items-center justify-center border-5 border-[#644FC1]`}
+            className={`w-10  h-10 rounded-lg bg-gray-200  mr-4 flex-shrink-0 flex items-center justify-center border-4 border-[#644FC1]`}
           ></div>
           <div className="flex flex-col flex-grow pr-20 sm:pr-24">
             <p className="text-gray-700 text-sm">

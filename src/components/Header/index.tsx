@@ -76,7 +76,6 @@ const Header: React.FC = () => {
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const searchBarRef = useRef<HTMLDivElement | null>(null);
 
-  // تعیین لینک فعال
   useEffect(() => {
     const currentPath = pathname || "/";
     let foundActiveLink = "";
@@ -97,13 +96,11 @@ const Header: React.FC = () => {
     setActiveLink(foundActiveLink);
   }, [pathname]);
 
-  // بستن منو و سرچ هنگام تغییر مسیر
   useEffect(() => {
     setIsMenuOpen(false);
     setIsSearchOpen(false);
   }, [pathname]);
 
-  // دریافت کاربر فعلی
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getSession();
@@ -141,7 +138,6 @@ const Header: React.FC = () => {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  // بستن منوها با کلیک خارج
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -418,7 +414,7 @@ const Header: React.FC = () => {
                 className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Login
+                Login/singnup
               </Link>
               <Link
                 href="/auth/signup"

@@ -3,7 +3,7 @@ import React, { useState, FC } from "react";
 import { IoAdd } from "react-icons/io5";
 import Modal from "@/components/Modal/Modal";
 
-const Page: FC = () => {
+const Contributiontiers: FC = () => {
   const PRIMARY_PURPLE: string = "#644FC1";
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -162,4 +162,4 @@ const Page: FC = () => {
   );
 };
 
-export default Page;
+export default Contributiontiers;
