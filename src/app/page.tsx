@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { IoBriefcaseOutline } from "react-icons/io5";
 import Link from "next/link";
-import { useTranslation } from "react-i18next"; // 👈 اضافه شد
+import { useTranslation } from "react-i18next";
 
 import { User } from "@supabase/supabase-js";
 
 export default function Home() {
   const router = useRouter();
-  const { t } = useTranslation(); // 👈 استفاده از هوک ترجمه
+  const { t } = useTranslation();
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,26 +48,25 @@ export default function Home() {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        {t("loading")} {/* 👈 ترجمه شد */}
+        {t("loading")}
       </div>
     );
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center">
       <h1 className="text-2xl md:text-3xl font-bold text-[#270F94] mb-4 mt-11">
-        {t("createProfileTitle")} {/* 👈 ترجمه شد */}
+        {t("createProfileTitle")}
       </h1>
       <p className="text-[#717171] max-w-xl mb-8">
-        {t("createProfileDescription")} {/* 👈 ترجمه شد */}
+        {t("createProfileDescription")}
       </p>
 
       <div
-        className="
- w-full max-w-[319px] h-auto min-h-[459px]
- border border-gray-300 text-[#644FC1]
- rounded-md shadow-sm p-6 sm:p-8
- flex flex-col items-center justify-between text-center bg-white mx-auto
- transition-all duration-300
+        className="w-full max-w-[319px] h-auto min-h-[459px]
+border border-gray-300 text-[#644FC1]
+rounded-md shadow-sm p-6 sm:p-8
+flex flex-col items-center justify-between text-center bg-white mx-auto
+transition-all duration-300
 "
       >
         <div className="flex flex-col items-center">
@@ -79,11 +78,11 @@ export default function Home() {
           </div>
 
           <h2 className="text-lg sm:text-xl font-semibold text-[#644FC1] mb-2">
-            {t("brandOrOrganization")} {/* 👈 ترجمه شد */}
+            {t("brandOrOrganization")}
           </h2>
 
           <p className="text-sm text-gray-600 mb-6 px-2 sm:px-4 leading-relaxed">
-            {t("brandEstablishedDescription")} {/* 👈 ترجمه شد */}
+            {t("brandEstablishedDescription")}
           </p>
         </div>
 
@@ -92,14 +91,14 @@ export default function Home() {
             onClick={handleStartClick}
             className="bg-[#5C4FC1] text-white px-6 py-2 sm:py-3 rounded-md hover:bg-blue-900 transition w-full text-sm sm:text-base cursor-pointer"
           >
-            {t("start")} {/* 👈 ترجمه شد */}
+            {t("start")}
           </button>
 
           <Link
             href="/explore"
             className="block mt-4 text-sm text-gray-500 underline hover:text-gray-700"
           >
-            {t("learnMore")} {/* 👈 ترجمه شد */}
+            {t("learnMore")}
           </Link>
         </div>
       </div>

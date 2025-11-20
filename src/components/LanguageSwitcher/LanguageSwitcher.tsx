@@ -26,7 +26,7 @@ export default function LanguageSwitcher() {
     return () => document.removeEventListener("click", handler);
   }, []);
 
-  const changeLanguage = (lng: "en" | "fa" | "ar") => {
+  const changeLanguage = (lng: "en" | "fa" | "ar" | "ru") => {
     i18n.changeLanguage(lng);
     document.documentElement.dir = lng === "fa" || lng === "ar" ? "rtl" : "ltr";
     setOpen(false);
@@ -40,6 +40,8 @@ export default function LanguageSwitcher() {
         return t("Persian (100)");
       case "ar":
         return t("Arabic (100)");
+      case "ru":
+        return t("Ruse (100)");
       default:
         return t("English (100)");
     }
@@ -76,6 +78,13 @@ export default function LanguageSwitcher() {
             onClick={() => changeLanguage("ar")}
           >
             Arabic
+          </button>
+
+          <button
+            className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors duration-100 text-gray-800"
+            onClick={() => changeLanguage("ru")}
+          >
+            Ruse
           </button>
 
           <button
