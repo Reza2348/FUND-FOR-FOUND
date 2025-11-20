@@ -5,11 +5,14 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { IoBriefcaseOutline } from "react-icons/io5";
 import Link from "next/link";
+import { useTranslation } from "react-i18next"; // 👈 اضافه شد
 
 import { User } from "@supabase/supabase-js";
 
 export default function Home() {
   const router = useRouter();
+  const { t } = useTranslation(); // 👈 استفاده از هوک ترجمه
+
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,30 +48,26 @@ export default function Home() {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Loading...
+        {t("loading")} {/* 👈 ترجمه شد */}
       </div>
     );
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center">
       <h1 className="text-2xl md:text-3xl font-bold text-[#270F94] mb-4 mt-11">
-        Create your profile and take the first step towards new opportunities
+        {t("createProfileTitle")} {/* 👈 ترجمه شد */}
       </h1>
       <p className="text-[#717171] max-w-xl mb-8">
-        By creating your account, you&apos;ll gain access to a thriving
-        community where brands and individuals are committed to offering you
-        ongoing support. This support network will empower you with the
-        resources, guidance, and connections you need to succeed, ensuring that
-        you&apos;re never alone on your journey.
+        {t("createProfileDescription")} {/* 👈 ترجمه شد */}
       </p>
 
       <div
         className="
- w-full max-w-[319px] h-auto min-h-[459px]
- border border-gray-300 text-[#644FC1]
- rounded-md shadow-sm p-6 sm:p-8
- flex flex-col items-center justify-between text-center bg-white mx-auto
- transition-all duration-300
+ w-full max-w-[319px] h-auto min-h-[459px]
+ border border-gray-300 text-[#644FC1]
+ rounded-md shadow-sm p-6 sm:p-8
+ flex flex-col items-center justify-between text-center bg-white mx-auto
+ transition-all duration-300
 "
       >
         <div className="flex flex-col items-center">
@@ -80,12 +79,11 @@ export default function Home() {
           </div>
 
           <h2 className="text-lg sm:text-xl font-semibold text-[#644FC1] mb-2">
-            Brand or organization
+            {t("brandOrOrganization")} {/* 👈 ترجمه شد */}
           </h2>
 
           <p className="text-sm text-gray-600 mb-6 px-2 sm:px-4 leading-relaxed">
-            If your brand is established and you&apos;re looking for continuous
-            support, get started now.
+            {t("brandEstablishedDescription")} {/* 👈 ترجمه شد */}
           </p>
         </div>
 
@@ -94,14 +92,14 @@ export default function Home() {
             onClick={handleStartClick}
             className="bg-[#5C4FC1] text-white px-6 py-2 sm:py-3 rounded-md hover:bg-blue-900 transition w-full text-sm sm:text-base cursor-pointer"
           >
-            Start
+            {t("start")} {/* 👈 ترجمه شد */}
           </button>
 
           <Link
             href="/explore"
             className="block mt-4 text-sm text-gray-500 underline hover:text-gray-700"
           >
-            Learn more
+            {t("learnMore")} {/* 👈 ترجمه شد */}
           </Link>
         </div>
       </div>

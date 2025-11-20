@@ -10,6 +10,7 @@ import { TbLogout } from "react-icons/tb";
 import { CgProfile } from "react-icons/cg";
 import { BiBriefcase } from "react-icons/bi";
 import { IoSettingsOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 interface User {
   id: string;
@@ -21,13 +22,6 @@ interface NavLink {
   href: string;
   label: string;
 }
-
-const NAV_LINKS: NavLink[] = [
-  { href: "/", label: "Home" },
-  { href: "/explore", label: "Explore" },
-  { href: "/about", label: "About us" },
-  { href: "/help", label: "Help & Support" },
-];
 
 const MenuItem: React.FC<{
   icon: React.ReactNode;
@@ -62,46 +56,30 @@ const MenuItem: React.FC<{
     </div>
   );
 };
-
 const Header: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [activeLink, setActiveLink] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState<boolean>(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const searchBarRef = useRef<HTMLDivElement | null>(null);
+  const NAV_LINKS: NavLink[] = [
+    { href: "/", label: t("home") },
+    { href: "/explore", label: t("explore") },
+    { href: "/help", label: t("help") },
+    { href: "/about", label: t("aboutUs") },
+  ];
 
   useEffect(() => {
-    const currentPath = pathname || "/";
-    let foundActiveLink = "";
-    const sortedLinks = [...NAV_LINKS].sort(
-      (a, b) => b.href.length - a.href.length
-    );
+    setHasMounted(true);
 
-    for (const link of sortedLinks) {
-      if (
-        currentPath.startsWith(link.href) &&
-        (link.href !== "/" || currentPath === "/")
-      ) {
-        foundActiveLink = link.href;
-        break;
-      }
-    }
-
-    setActiveLink(foundActiveLink);
-  }, [pathname]);
-
-  useEffect(() => {
-    setIsMenuOpen(false);
-    setIsSearchOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session?.user) {
@@ -139,6 +117,33 @@ const Header: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (!hasMounted) return;
+
+    const currentPath = pathname || "/";
+    let foundActiveLink = "";
+    const sortedLinks = [...NAV_LINKS].sort(
+      (a, b) => b.href.length - a.href.length
+    );
+
+    for (const link of sortedLinks) {
+      if (
+        currentPath.startsWith(link.href) &&
+        (link.href !== "/" || currentPath === "/")
+      ) {
+        foundActiveLink = link.href;
+        break;
+      }
+    }
+
+    setActiveLink(foundActiveLink);
+  }, [pathname, NAV_LINKS, hasMounted]);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+    setIsSearchOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
         userMenuRef.current &&
@@ -147,21 +152,25 @@ const Header: React.FC = () => {
         setIsUserMenuOpen(false);
       }
 
-      if (
-        isMenuOpen &&
+      const isMobileMenuClick =
         mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target as Node) &&
-        !(event.target as HTMLElement).closest(".md\\:hidden > button")
-      ) {
+        !mobileMenuRef.current.contains(event.target as Node);
+      const isHamburgerIconClick = (event.target as HTMLElement).closest(
+        ".md\\:hidden > button"
+      );
+
+      if (isMenuOpen && isMobileMenuClick && !isHamburgerIconClick) {
         setIsMenuOpen(false);
       }
 
-      if (
-        isSearchOpen &&
+      const isSearchBarClick =
         searchBarRef.current &&
-        !searchBarRef.current.contains(event.target as Node) &&
-        !(event.target as HTMLElement).closest(".md\\:hidden .text-gray-700")
-      ) {
+        !searchBarRef.current.contains(event.target as Node);
+      const isSearchIconClick = (event.target as HTMLElement).closest(
+        ".md\\:hidden .text-gray-700"
+      );
+
+      if (isSearchOpen && isSearchBarClick && !isSearchIconClick) {
         setIsSearchOpen(false);
       }
     }
@@ -188,6 +197,31 @@ const Header: React.FC = () => {
 
   if (pathname?.startsWith("/auth")) return null;
 
+  if (!hasMounted) {
+    return (
+      <nav className="bg-white border-b border-gray-200">
+        <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 h-16 md:h-20">
+          <Link href="/">
+            <Image
+              src="/Vector.svg"
+              alt="logo"
+              width={25}
+              height={25}
+              priority
+            />
+          </Link>
+          <div className="hidden md:flex flex-grow justify-center gap-10 lg:ml-[106px]">
+            <span className="text-gray-400">Loading Navigation...</span>
+          </div>
+          <div className="md:hidden flex items-center gap-3">
+            <HiSearch size={24} className="text-gray-700" />
+            <HiMenu size={26} className="text-gray-700" />
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
@@ -202,7 +236,6 @@ const Header: React.FC = () => {
             />
           </Link>
         </div>
-
         <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10 lg:ml-[106px]">
           {NAV_LINKS.map((link) => (
             <Link
@@ -228,7 +261,7 @@ const Header: React.FC = () => {
             />
             <input
               type="text"
-              placeholder="Search brand, category, tag or..."
+              placeholder={t("searchPlaceholder")}
               className="border border-gray-200 rounded-full pl-8 pr-3 py-1.5 text-sm w-32 sm:w-40 md:w-48 lg:w-64 focus:outline-none focus:ring-1 focus:ring-[#5b4bff] transition-all"
             />
           </div>
@@ -267,13 +300,13 @@ const Header: React.FC = () => {
                   <nav className="pt-3 flex flex-col gap-1">
                     <MenuItem
                       icon={<CgProfile size={20} className="text-gray-600" />}
-                      label="My profile"
+                      label={t("myProfile")}
                       href={`/dashboard`}
                       onClick={() => setIsUserMenuOpen(false)}
                     />
                     <MenuItem
                       icon={<BiBriefcase size={20} className="text-gray-600" />}
-                      label="My brands and organisations"
+                      label={t("myBrands")}
                       href="/brands"
                       onClick={() => setIsUserMenuOpen(false)}
                     />
@@ -284,13 +317,13 @@ const Header: React.FC = () => {
                           className="text-gray-600"
                         />
                       }
-                      label="Settings"
+                      label={t("settings")}
                       href="/settings"
                       onClick={() => setIsUserMenuOpen(false)}
                     />
                     <MenuItem
                       icon={<TbLogout size={20} className="text-gray-600" />}
-                      label="Log out"
+                      label={t("logOut")}
                       onClick={handleLogout}
                       isLogout={true}
                     />
@@ -304,13 +337,13 @@ const Header: React.FC = () => {
                 href="/auth/login"
                 className="px-4 py-1.5 border border-[#5b4bff] text-[#5b4bff] rounded-full text-sm font-medium hover:bg-[#f2f0ff] transition inline-block text-center"
               >
-                Login
+                {t("login")}
               </Link>
               <Link
                 href="/auth/signup"
                 className="px-4 py-1.5 border border-[#5b4bff] bg-[#5b4bff] text-white rounded-full text-sm font-medium hover:bg-[#493ae0] transition inline-block text-center"
               >
-                Register
+                {t("register")}
               </Link>
             </div>
           )}
@@ -338,7 +371,7 @@ const Header: React.FC = () => {
             />
             <input
               type="text"
-              placeholder="Search brand, category, tag or..."
+              placeholder={t("searchPlaceholder")}
               className="w-full border border-gray-300 rounded-xl pl-10 pr-10 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#5b4bff] transition-all"
             />
             <button
@@ -414,14 +447,14 @@ const Header: React.FC = () => {
                 className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Login/singnup
+                {t("Login/singnup")}
               </Link>
               <Link
                 href="/auth/signup"
                 className="px-4 py-3 bg-[#5b4bff] text-white rounded-xl text-base font-medium hover:bg-[#493ae0] transition inline-block text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Start
+                {t("start")}
               </Link>
             </div>
           )}
@@ -433,13 +466,13 @@ const Header: React.FC = () => {
                 className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                My Profile
+                {t("myProfile")}
               </Link>
               <button
                 onClick={handleLogout}
                 className="px-4 py-3 bg-red-50 text-red-600 rounded-xl text-base font-medium transition inline-block text-center hover:bg-red-100"
               >
-                Log out
+                {t("logOut")}
               </button>
             </div>
           )}
