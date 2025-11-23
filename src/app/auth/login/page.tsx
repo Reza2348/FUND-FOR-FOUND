@@ -12,16 +12,23 @@ import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
-import GoogleLoginComponent from "@/components/GoogleLoginComponent/GoogleLoginComponent";
+import { useTranslation } from "react-i18next";
 
+// Dynamic import برای کامپوننت‌هایی که فقط در کلاینت هستند
 const ToastContainer = dynamic(
   () => import("react-toastify").then((mod) => mod.ToastContainer),
   { ssr: false }
 );
 
+const GoogleLoginComponent = dynamic(
+  () => import("@/components/GoogleLoginComponent/GoogleLoginComponent"),
+  { ssr: false }
+);
+
+// Zod schema با کلیدهای ثابت برای ترجمه
 const loginSchema = z.object({
-  identifier: z.string().min(1, "Email is required").email("Invalid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  identifier: z.string().min(1, "emailRequired").email("invalidEmail"),
+  password: z.string().min(6, "passwordMinLength"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -29,7 +36,16 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [mounted, setMounted] = useState(false); // برای حل Hydration
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    setMounted(true); // بعد از mount محتوای ترجمه نمایش داده می‌شود
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const {
     register,
@@ -51,23 +67,19 @@ export default function LoginPage() {
       );
 
       if (error) throw error;
-      if (!loginData?.user) throw new Error("User not found");
+      if (!loginData?.user) throw new Error("userNotFound");
 
-      toast.success("Login successful!");
+      toast.success(t("loginSuccess"));
 
-      timerRef.current = setTimeout(() => router.push("/"), 2000);
+      timerRef.current = setTimeout(() => router.push("/"), 1000);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Unexpected error occurred";
-      toast.error(errorMessage);
+        err instanceof Error ? err.message : "unexpectedError";
+      toast.error(t(errorMessage));
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
+  if (!mounted) return null; // تا mount نشده، هیچ چیزی رندر نشود
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -76,39 +88,44 @@ export default function LoginPage() {
           <Image src="/Vector.svg" alt="logo" width={50} height={50} priority />
         </div>
         <h1 className="text-3xl font-bold text-center mb-2 text-indigo-800">
-          FUND FOR FOUND
+          {t("appTitle")}
         </h1>
         <p className="text-center text-gray-600 mb-8">
-          Create an account or sign in to start creating
+          {t("createAccountOrSignIn")}
         </p>
 
         <GoogleLoginComponent className="w-full flex items-center justify-center border border-gray-300 bg-gray-50 text-gray-700 py-3 rounded-md mb-4 hover:bg-gray-100 transition duration-150 cursor-pointer">
-          <FaGoogle className="w-5 h-5 mr-2" />
-          <span>Continue with Google</span>
+          <FaGoogle className="w-5 h-5 mr-2 ml-3" />
+          <span>{t("continueWithGoogle")}</span>
         </GoogleLoginComponent>
 
         <div className="flex items-center my-4">
           <div className="flex-grow border-t border-gray-300"></div>
-          <span className="flex-shrink mx-4 text-gray-500 text-sm">or</span>
+          <span className="flex-shrink mx-4 text-gray-500 text-sm">
+            {t("or")}
+          </span>
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div>
-            <p>Email address</p>
-            <label htmlFor="identifier" className="sr-only">
-              Email address
+            <label
+              htmlFor="identifier"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {t("emailAddress")}
             </label>
             <input
               id="identifier"
               type="text"
               {...register("identifier")}
-              placeholder="yourname@example.com"
+              placeholder={t("emailPlaceholder")}
+              defaultValue=""
               className="w-full border px-3 py-3 rounded-md focus:ring-purple-500 focus:border-purple-500"
             />
             {errors.identifier && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.identifier.message}
+                {t(errors.identifier.message || "")}
               </p>
             )}
           </div>
@@ -118,39 +135,40 @@ export default function LoginPage() {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Password
+              {t("password")}
             </label>
             <input
               id="password"
               type={showPassword ? "text" : "password"}
               {...register("password")}
-              placeholder="Enter your password"
+              placeholder={t("passwordPlaceholder")}
+              defaultValue=""
               className="w-full border px-3 py-3 rounded-md focus:ring-purple-500 focus:border-purple-500 pr-10"
             />
 
-            {/* 💡 منطق جدید برای رفع هشدار و پیاده‌سازی سوئیچ آیکون */}
-            {showPassword ? (
-              <FaEyeSlash
-                className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"
-                onClick={() => setShowPassword(false)}
-              />
-            ) : (
-              <FaEye
-                className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"
-                onClick={() => setShowPassword(true)}
-              />
-            )}
+            {mounted && // فقط بعد از mount نمایش داده میشه
+              (showPassword ? (
+                <FaEyeSlash
+                  className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <FaEye
+                  className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"
+                  onClick={() => setShowPassword(true)}
+                />
+              ))}
 
             <Link
               href="/auth/Forgotpassword"
               className="text-xs text-purple-700 hover:underline mt-2 inline-block"
             >
-              Forgot your password?
+              {t("forgotPassword")}
             </Link>
 
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
+                {t(errors.password.message || "")}
               </p>
             )}
           </div>
@@ -164,17 +182,17 @@ export default function LoginPage() {
                 : "bg-purple-700 hover:bg-purple-800"
             }`}
           >
-            {isSubmitting ? "Logging in..." : "Continue"}
+            {isSubmitting ? t("loggingIn") : t("continue")}
           </button>
         </form>
 
         <p className="text-center mt-6 text-sm">
-          Don&apos;t have an account?
+          {t("dontHaveAccount")}
           <Link
             href="/auth/signup"
             className="text-purple-700 ml-1 font-medium hover:underline"
           >
-            Create an account
+            {t("createAccount")}
           </Link>
         </p>
       </div>

@@ -56,20 +56,22 @@ const MenuItem: React.FC<{
     </div>
   );
 };
+
 const Header: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { t } = useTranslation();
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
-  const [activeLink, setActiveLink] = useState<string>("");
+  const { t, i18n } = useTranslation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeLink, setActiveLink] = useState("");
   const [user, setUser] = useState<User | null>(null);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState<boolean>(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const searchBarRef = useRef<HTMLDivElement | null>(null);
+
   const NAV_LINKS: NavLink[] = [
     { href: "/", label: t("home") },
     { href: "/explore", label: t("explore") },
@@ -90,9 +92,7 @@ const Header: React.FC = () => {
         const id = data.session.user.id;
         const email = data.session.user.email || "";
         setUser({ id, username, email });
-      } else {
-        setUser(null);
-      }
+      } else setUser(null);
     };
 
     fetchUser();
@@ -107,9 +107,7 @@ const Header: React.FC = () => {
           const id = session.user.id;
           const email = session.user.email || "";
           setUser({ id, username, email });
-        } else {
-          setUser(null);
-        }
+        } else setUser(null);
       }
     );
 
@@ -118,13 +116,11 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     if (!hasMounted) return;
-
     const currentPath = pathname || "/";
     let foundActiveLink = "";
     const sortedLinks = [...NAV_LINKS].sort(
       (a, b) => b.href.length - a.href.length
     );
-
     for (const link of sortedLinks) {
       if (
         currentPath.startsWith(link.href) &&
@@ -134,7 +130,6 @@ const Header: React.FC = () => {
         break;
       }
     }
-
     setActiveLink(foundActiveLink);
   }, [pathname, NAV_LINKS, hasMounted]);
 
@@ -148,9 +143,8 @@ const Header: React.FC = () => {
       if (
         userMenuRef.current &&
         !userMenuRef.current.contains(event.target as Node)
-      ) {
+      )
         setIsUserMenuOpen(false);
-      }
 
       const isMobileMenuClick =
         mobileMenuRef.current &&
@@ -158,10 +152,8 @@ const Header: React.FC = () => {
       const isHamburgerIconClick = (event.target as HTMLElement).closest(
         ".md\\:hidden > button"
       );
-
-      if (isMenuOpen && isMobileMenuClick && !isHamburgerIconClick) {
+      if (isMenuOpen && isMobileMenuClick && !isHamburgerIconClick)
         setIsMenuOpen(false);
-      }
 
       const isSearchBarClick =
         searchBarRef.current &&
@@ -169,17 +161,46 @@ const Header: React.FC = () => {
       const isSearchIconClick = (event.target as HTMLElement).closest(
         ".md\\:hidden .text-gray-700"
       );
-
-      if (isSearchOpen && isSearchBarClick && !isSearchIconClick) {
+      if (isSearchOpen && isSearchBarClick && !isSearchIconClick)
         setIsSearchOpen(false);
-      }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMenuOpen, isSearchOpen]);
 
-  const handleLogout = async (): Promise<void> => {
+  useEffect(() => {
+    if (typeof window === "undefined" || !document.body) return;
+
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    const isRTL = ["fa", "ar"].includes(i18n.language);
+
+    if (isMenuOpen || isSearchOpen) {
+      document.body.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        if (isRTL) {
+          document.body.style.paddingLeft = `${scrollbarWidth}px`;
+          document.body.style.paddingRight = "";
+        } else {
+          document.body.style.paddingRight = `${scrollbarWidth}px`;
+          document.body.style.paddingLeft = "";
+        }
+      }
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+      document.body.style.paddingLeft = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+      document.body.style.paddingLeft = "";
+    };
+  }, [isMenuOpen, isSearchOpen, i18n.language]);
+
+  const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsUserMenuOpen(false);
     router.push("/");
@@ -189,11 +210,16 @@ const Header: React.FC = () => {
     setIsSearchOpen(!isSearchOpen);
     if (!isSearchOpen) setIsMenuOpen(false);
   };
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     if (!isMenuOpen) setIsSearchOpen(false);
   };
+
+  useEffect(() => {
+    document.documentElement.dir = ["fa", "ar"].includes(i18n.language)
+      ? "rtl"
+      : "ltr";
+  }, [i18n.language]);
 
   if (pathname?.startsWith("/auth")) return null;
 
@@ -211,7 +237,7 @@ const Header: React.FC = () => {
             />
           </Link>
           <div className="hidden md:flex flex-grow justify-center gap-10 lg:ml-[106px]">
-            <span className="text-gray-400">Loading Navigation...</span>
+            <span className="text-gray-400">{t("loadingNavigation")}</span>
           </div>
           <div className="md:hidden flex items-center gap-3">
             <HiSearch size={24} className="text-gray-700" />
@@ -225,6 +251,7 @@ const Header: React.FC = () => {
   return (
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
+        {/* Logo */}
         <div className="flex items-center gap-2">
           <Link href="/">
             <Image
@@ -236,6 +263,7 @@ const Header: React.FC = () => {
             />
           </Link>
         </div>
+
         <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10 lg:ml-[106px]">
           {NAV_LINKS.map((link) => (
             <Link
@@ -254,6 +282,7 @@ const Header: React.FC = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3 lg:gap-4 mt-2 md:mt-0">
+          {/* Search */}
           <div className="relative">
             <HiSearch
               className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
@@ -266,6 +295,7 @@ const Header: React.FC = () => {
             />
           </div>
 
+          {/* User */}
           {user ? (
             <div className="relative" ref={userMenuRef}>
               <div
@@ -275,8 +305,18 @@ const Header: React.FC = () => {
                 {user.username?.substring(0, 2).toUpperCase() ||
                   user.email.substring(0, 2).toUpperCase()}
               </div>
+
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-white shadow-xl rounded-xl p-3 z-50">
+                <div
+                  className={`absolute mt-2 min-w-64 max-w-sm bg-white shadow-xl rounded-xl p-3 z-50
+                    overflow-auto max-h-[calc(100vh-5rem)]
+                    ${
+                      ["fa", "ar"].includes(i18n.language)
+                        ? "left-0 right-auto"
+                        : "right-0 left-auto"
+                    }`}
+                >
+                  {/* Header User Info */}
                   <div className="flex items-start gap-3 pb-3 border-b border-gray-100">
                     <div className="w-10 h-10 bg-purple-200 rounded-full flex items-center justify-center shrink-0">
                       <CgProfile size={24} className="text-purple-600" />
@@ -297,11 +337,12 @@ const Header: React.FC = () => {
                     </button>
                   </div>
 
+                  {/* Menu Items */}
                   <nav className="pt-3 flex flex-col gap-1">
                     <MenuItem
                       icon={<CgProfile size={20} className="text-gray-600" />}
                       label={t("myProfile")}
-                      href={`/dashboard`}
+                      href="/dashboard"
                       onClick={() => setIsUserMenuOpen(false)}
                     />
                     <MenuItem
@@ -325,7 +366,7 @@ const Header: React.FC = () => {
                       icon={<TbLogout size={20} className="text-gray-600" />}
                       label={t("logOut")}
                       onClick={handleLogout}
-                      isLogout={true}
+                      isLogout
                     />
                   </nav>
                 </div>
@@ -348,6 +389,7 @@ const Header: React.FC = () => {
             </div>
           )}
         </div>
+
         <div className="md:hidden flex items-center gap-3">
           <HiSearch
             size={24}
@@ -359,6 +401,7 @@ const Header: React.FC = () => {
           </button>
         </div>
       </div>
+
       {isSearchOpen && (
         <div
           ref={searchBarRef}
@@ -383,10 +426,11 @@ const Header: React.FC = () => {
           </div>
         </div>
       )}
+
       {isMenuOpen && (
         <div
           ref={mobileMenuRef}
-          className="md:hidden fixed inset-0 bg-white z-40 p-4"
+          className="md:hidden fixed inset-0 bg-white z-40 p-4 overflow-y-auto"
         >
           <div className="flex justify-between items-center h-16 border-b border-gray-200 mb-6">
             <Link href="/" onClick={() => setIsMenuOpen(false)}>
@@ -440,27 +484,26 @@ const Header: React.FC = () => {
             ))}
           </nav>
 
-          {!user && (
-            <div className="absolute bottom-4 left-0 right-0 px-4 flex flex-col gap-3">
+          {/* Mobile User Links */}
+          {!user ? (
+            <div className="px-4 flex flex-col gap-3 mt-8">
               <Link
                 href="/auth/login"
                 className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t("Login/singnup")}
+                {t("login")}
               </Link>
               <Link
                 href="/auth/signup"
                 className="px-4 py-3 bg-[#5b4bff] text-white rounded-xl text-base font-medium hover:bg-[#493ae0] transition inline-block text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t("start")}
+                {t("register")}
               </Link>
             </div>
-          )}
-
-          {user && (
-            <div className="absolute bottom-4 left-0 right-0 px-4 flex flex-col gap-3">
+          ) : (
+            <div className="px-4 flex flex-col gap-3 mt-8">
               <Link
                 href="/dashboard"
                 className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"

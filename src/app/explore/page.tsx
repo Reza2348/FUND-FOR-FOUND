@@ -1,11 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HiSearch, HiX } from "react-icons/hi";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 
 const Explore: React.FC = () => {
   const [searchText, setSearchText] = useState("");
+  const [isClient, setIsClient] = useState(false);
+  const { t } = useTranslation();
+
+  // Ensure we only render on the client to prevent SSR mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
+
+  const categories = [
+    "technologyAndKnowledge",
+    "creativeArtAndMedia",
+    "businessAndEntrepreneurship",
+    "specialAndPersonal",
+  ];
 
   return (
     <div className="max-w-[1280px] mx-auto mt-6 flex flex-col gap-10 px-4 pr-4">
@@ -19,7 +36,7 @@ const Explore: React.FC = () => {
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search"
+            placeholder={t("searchr")}
             className="border border-gray-200 rounded-full pl-10 pr-10 py-2 text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#5b4bff] transition-all bg-white text-gray-900"
           />
           {searchText && (
@@ -36,103 +53,95 @@ const Explore: React.FC = () => {
             className="mt-3 cursor-pointer hover:underline"
             onClick={() => setSearchText("")}
           >
-            Cancel
+            {t("cancel")}
           </p>
         )}
       </div>
+
       <div className="w-full bg-white rounded-2xl shadow p-6 flex flex-col items-center gap-6">
         <h1 className="text-[#644FC1] text-2xl font-semibold text-center">
-          Categories & Subcategories
+          {t("categoriesAndSubcategories")}
         </h1>
         <div className="flex flex-wrap justify-center gap-3">
-          {[
-            "Technology & Knowledge",
-            "Creative art & media",
-            "Business & Entrepreneurship",
-            "Special & Personal",
-          ].map((cat) => (
+          {categories.map((catKey) => (
             <button
-              key={cat}
+              key={catKey}
               className="px-5 py-2 border border-[#644FC1] text-[#644FC1] rounded-full hover:bg-[#644FC1] hover:text-white transition"
             >
-              {cat}
+              {t(catKey)}
             </button>
           ))}
         </div>
-
         <div className="flex flex-wrap justify-center gap-3">
           <select className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700">
-            <option>Sort by</option>
-            <option>Newest</option>
-            <option>Most funded</option>
+            <option>{t("sortBy")}</option>
+            <option>{t("newest")}</option>
+            <option>{t("mostFunded")}</option>
           </select>
           <select className="border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700">
-            <option>Country</option>
-            <option>USA</option>
-            <option>Germany</option>
+            <option>{t("country")}</option>
+            <option>{t("USA")}</option>
+            <option>{t("Germany")}</option>
           </select>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center w-full">
-        {Array(6)
-          .fill(0)
-          .map((_, i) => (
-            <div
-              key={i}
-              className="rounded-2xl overflow-hidden w-full max-w-[320px] h-[420px] mx-auto"
-            >
-              <div className="relative w-full h-48">
-                <Image
-                  src="/Clip path group.svg"
-                  alt="Project"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded">
-                  <h2 className="text-white text-sm font-semibold flex items-center gap-2">
-                    <div className="w-6 h-6 bg-white flex items-center justify-center rounded-full">
-                      <Image
-                        src="/Circle.svg"
-                        alt="Icon"
-                        width={16}
-                        height={16}
-                      />
-                    </div>
-                    Being podcast
-                  </h2>
-                </div>
-              </div>
-
-              <div className="p-4 flex flex-col gap-2">
-                <p> Being podcast</p>
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  A Foundation for Being is dedicated to exploring what it means
-                  to live a meaningful life.
-                </p>
-                <p className="flex items-center gap-2 mt-2">
-                  <Image
-                    src="/Terminal.svg"
-                    alt="Project"
-                    width={24}
-                    height={24}
-                  />
-                  Creative art & media
-                </p>
-
-                <div className="border-t border-gray-200 mt-2"></div>
-                <div className="text-xs text-gray-500 mt-1">
-                  <p>117 Financial Contributions</p>
-                  <p>$11,950 Money raised</p>
-                </div>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div
+            key={i}
+            className="rounded-2xl overflow-hidden w-full max-w-[320px] h-[420px] mx-auto"
+          >
+            <div className="relative w-full h-48">
+              <Image
+                src="/Clip path group.svg"
+                alt={t("project")}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded">
+                <h2 className="text-white text-sm font-semibold flex items-center gap-2">
+                  <div className="w-6 h-6 bg-white flex items-center justify-center rounded-full">
+                    <Image
+                      src="/Circle.svg"
+                      alt={t("icon")}
+                      width={16}
+                      height={16}
+                    />
+                  </div>
+                  {t("Being podcast")}
+                </h2>
               </div>
             </div>
-          ))}
+
+            <div className="p-4 flex flex-col gap-2">
+              <p>{t("Being podcast")}</p>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {t("projectDescription")}
+              </p>
+              <p className="flex items-center gap-2 mt-2">
+                <Image
+                  src="/Terminal.svg"
+                  alt={t("categoryIcon")}
+                  width={24}
+                  height={24}
+                />
+                {t("creativeArtAndMedia")}
+              </p>
+
+              <div className="border-t border-gray-200 mt-2"></div>
+              <div className="text-xs text-gray-500 mt-1">
+                <p>{t("financialContributions", { count: 117 })}</p>
+                <p>{t("moneyRaised", { amount: "$11,950" })}</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="flex justify-center mb-10">
         <button className="px-6 py-2 border border-[#644FC1] text-[#644FC1] rounded-md hover:bg-[#644FC1] hover:text-white transition">
-          View more
+          {t("viewMore")}
         </button>
       </div>
     </div>
