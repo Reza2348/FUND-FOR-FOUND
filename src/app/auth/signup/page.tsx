@@ -1,3 +1,4 @@
+// ./src/app/auth/signup/page.tsx
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -13,15 +14,14 @@ import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 
-// Client-only Google login component
 const GoogleLoginComponent = dynamic(
   () => import("@/components/GoogleLoginComponent/GoogleLoginComponent"),
   { ssr: false }
 );
 
-// Zod schema factory for i18n
-export const signUpSchema = (t: any) =>
+export const signUpSchema = (t: TFunction) =>
   z.object({
     firstName: z.string().min(1, t("first_name_required")),
     lastName: z.string().min(1, t("last_name_required")),
