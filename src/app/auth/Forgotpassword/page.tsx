@@ -102,7 +102,7 @@ export default function ForgotPassword() {
               type="text"
               {...register("emailOrPhone")}
               placeholder="example@email.com / 0912345678"
-              className="w-full border border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500 p-2 text-sm placeholder:text-gray-400 placeholder:text-[13px] sm:placeholder:text-[14px]"
+              className="w-full border border-[#8D75F7] rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500 p-2 text-sm placeholder:text-gray-400 placeholder:text-[13px] sm:placeholder:text-[14px]"
             />
 
             {errors.emailOrPhone && (

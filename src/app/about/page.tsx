@@ -12,11 +12,11 @@ const About = () => {
           {t("About Us")}
         </h1>
 
-        <p className="text-gray-600 mt-4 sm:mt-5 leading-relaxed text-sm sm:text-base md:text-lg">
+        <p className="text-gray-600 mt-4 sm:mt-5 text-start leading-relaxed text-sm sm:text-base md:text-lg">
           {t("Paragraph")}
         </p>
 
-        <p className="text-gray-600 mt-3 leading-relaxed text-sm sm:text-base md:text-lg">
+        <p className="text-gray-600 mt-3 text-start leading-relaxed text-sm sm:text-base md:text-lg">
           {t("Paragraph2")}
         </p>
       </div>

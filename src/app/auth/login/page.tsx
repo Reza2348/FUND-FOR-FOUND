@@ -14,18 +14,15 @@ import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-// Dynamic import برای کامپوننت‌هایی که فقط در کلاینت هستند
 const ToastContainer = dynamic(
   () => import("react-toastify").then((mod) => mod.ToastContainer),
   { ssr: false }
 );
-
 const GoogleLoginComponent = dynamic(
   () => import("@/components/GoogleLoginComponent/GoogleLoginComponent"),
   { ssr: false }
 );
 
-// Zod schema با کلیدهای ثابت برای ترجمه
 const loginSchema = z.object({
   identifier: z.string().min(1, "emailRequired").email("invalidEmail"),
   password: z.string().min(6, "passwordMinLength"),
@@ -36,12 +33,12 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [mounted, setMounted] = useState(false); // برای حل Hydration
+  const [mounted, setMounted] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
-    setMounted(true); // بعد از mount محتوای ترجمه نمایش داده می‌شود
+    setMounted(true);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
@@ -79,7 +76,7 @@ export default function LoginPage() {
     }
   };
 
-  if (!mounted) return null; // تا mount نشده، هیچ چیزی رندر نشود
+  if (!mounted) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -121,7 +118,7 @@ export default function LoginPage() {
               {...register("identifier")}
               placeholder={t("emailPlaceholder")}
               defaultValue=""
-              className="w-full border px-3 py-3 rounded-md focus:ring-purple-500 focus:border-purple-500"
+              className="w-full border border-[#8D75F7] px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500"
             />
             {errors.identifier && (
               <p className="text-red-500 text-sm mt-1">
@@ -143,10 +140,10 @@ export default function LoginPage() {
               {...register("password")}
               placeholder={t("passwordPlaceholder")}
               defaultValue=""
-              className="w-full border px-3 py-3 rounded-md focus:ring-purple-500 focus:border-purple-500 pr-10"
+              className="w-full border border-[#8D75F7] px-3 py-2 rounded-md focus:ring-purple-500 focus:border-purple-500 pr-10"
             />
 
-            {mounted && // فقط بعد از mount نمایش داده میشه
+            {mounted &&
               (showPassword ? (
                 <FaEyeSlash
                   className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"

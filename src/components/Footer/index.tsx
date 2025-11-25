@@ -5,6 +5,7 @@ import { FaTwitter, FaGithub, FaDiscord, FaLinkedin } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { usePathname } from "next/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher/LanguageSwitcher";
+import Link from "next/link";
 
 import { useTranslation } from "react-i18next";
 
@@ -20,30 +21,68 @@ interface FooterSection {
   links: FooterLink[];
 }
 
+interface LinkComponentProps {
+  href: string;
+  external?: boolean;
+  children: React.ReactNode;
+}
+
 const FOOTER_NAV_KEYS = [
   {
     titleKey: "aboutUs",
     links: [
       { nameKey: "aboutUs", href: "/about" },
-      { nameKey: "contactUs", href: "#" },
+      { nameKey: "contactUs", href: "/contact" },
     ],
   },
   {
     titleKey: "explore",
     links: [
-      { nameKey: "blog", href: "#" },
-      { nameKey: "how3FWorks", href: "#" },
-      { nameKey: "help", href: "#" },
+      { nameKey: "blog", href: "/blog" },
+      { nameKey: "how3FWorks", href: "/how-it-works" },
+      { nameKey: "help", href: "/help" },
     ],
   },
   {
     titleKey: "brandsAndOrganizations",
     links: [
-      { nameKey: "brandsAndOrganizations", href: "#" },
-      { nameKey: "pricing", href: "#", external: true },
+      { nameKey: "brandsAndOrganizations", href: "/brands" },
+      {
+        nameKey: "pricing",
+        href: "https://example.com/pricing",
+        external: true,
+      },
     ],
   },
 ];
+
+const UTILITY_LINKS = [
+  { nameKey: "trustAndSafety", href: "/safety" },
+  { nameKey: "termsOfUse", href: "/terms" },
+  { nameKey: "privacyPolicy", href: "/privacy" },
+];
+
+const LinkComponent = ({ href, external, children }: LinkComponentProps) => {
+  const isExternal = external || href.startsWith("http");
+  const commonProps = {
+    className:
+      "group inline-flex items-center text-sm hover:text-gray-800 transition-colors",
+  };
+
+  if (isExternal) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" {...commonProps}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} {...commonProps}>
+      {children}
+    </Link>
+  );
+};
 
 export default function Footer() {
   const { t, i18n } = useTranslation();
@@ -59,11 +98,12 @@ export default function Footer() {
 
   if (!hasMounted) {
     return (
-      <footer className={`bg-[#F5F5F5] text-[#444444] rounded-2xl mt-[412px]`}>
+      <footer className={`bg-[#F5F5F5] text-[#444444] rounded-2xl`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12"></div>
       </footer>
     );
   }
+
   const isRTL = i18n.language === "fa";
   const textAlignment = isRTL ? "sm:text-right" : "sm:text-left";
   const marginForBadge = isRTL ? "mr-2" : "ml-2";
@@ -80,7 +120,7 @@ export default function Footer() {
 
   return (
     <footer
-      className={`bg-[#F5F5F5] text-[#444444] rounded-2xl mt-[412px] ${
+      className={`bg-[#F5F5F5] text-[#444444] rounded-2xl mt-16 sm:mt-20 md:mt-24 ${
         isRTL ? "text-right" : "text-left"
       }`}
       dir={containerDir}
@@ -95,12 +135,7 @@ export default function Footer() {
               <ul className="mt-4 space-y-2">
                 {section.links.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      target={link.external ? "_blank" : undefined}
-                      rel={link.external ? "noopener noreferrer" : undefined}
-                      className="group inline-flex items-center text-sm hover:text-gray-800"
-                    >
+                    <LinkComponent href={link.href} external={link.external}>
                       {link.name}
                       {link.badge && (
                         <span
@@ -109,7 +144,7 @@ export default function Footer() {
                           {link.badge}
                         </span>
                       )}
-                    </a>
+                    </LinkComponent>
                   </li>
                 ))}
               </ul>
@@ -117,21 +152,51 @@ export default function Footer() {
           ))}
         </div>
       </div>
-
       <div className="border-t border-[#AA99EC]">
         <div className="max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4 mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <LanguageSwitcher />
           <div className="flex flex-wrap justify-center items-center gap-4">
-            <p className="text-sm text-gray-500">{t("trustAndSafety")}</p>
-            <p className="text-sm text-gray-500">{t("termsOfUse")}</p>
-            <p className="text-sm text-gray-500">{t("privacyPolicy")}</p>
+            {UTILITY_LINKS.map((link) => (
+              <Link
+                key={link.nameKey}
+                href={link.href}
+                className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+              >
+                {t(link.nameKey)}
+              </Link>
+            ))}
           </div>
           <div className="flex gap-4 justify-center mt-2 sm:mt-0">
-            <FaTwitter size={26} />
-            <FaGithub size={26} />
-            <FaDiscord size={26} />
-            <FaLinkedin size={26} />
-            <MdEmail size={26} />
+            <Link href={"https://twitter.com"} aria-label="Twitter">
+              <FaTwitter
+                size={26}
+                className="text-gray-500 hover:text-blue-900 transition-colors"
+              />
+            </Link>
+            <Link href={"https://github.com/Reza2348"} aria-label="GitHub">
+              <FaGithub
+                size={26}
+                className="text-gray-500 hover:text-blue-900 transition-colors"
+              />
+            </Link>
+            <Link href={"https://discord.gg"} aria-label="Discord">
+              <FaDiscord
+                size={26}
+                className="text-gray-500 hover:text-blue-900 transition-colors"
+              />
+            </Link>
+            <Link href={"https://linkedin.com"} aria-label="LinkedIn">
+              <FaLinkedin
+                size={26}
+                className="text-gray-500 hover:text-blue-900 transition-colors"
+              />
+            </Link>
+            <Link href={"mailto:info@example.com"} aria-label="Email">
+              <MdEmail
+                size={26}
+                className="text-gray-500 hover:text-blue-900 transition-colors"
+              />
+            </Link>
           </div>
         </div>
       </div>

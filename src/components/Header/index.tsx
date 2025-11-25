@@ -250,7 +250,7 @@ const Header: React.FC = () => {
 
   return (
     <nav className="bg-white border-b border-gray-200">
-      <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Link href="/">
@@ -264,7 +264,7 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10 lg:ml-[106px]">
+        <div className="hidden md:flex flex-grow justify-center gap-6 lg:gap-10">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}

@@ -47,8 +47,8 @@ export default function Home() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        {t("loading")}
+      <div className="w-full flex items-center text-start justify-center pt-20 text-gray-400">
+        <p className="min-h-screen">Loading...</p>
       </div>
     );
 
@@ -63,8 +63,8 @@ export default function Home() {
 
       <div
         className="w-full max-w-[319px] h-auto min-h-[459px]
-border border-gray-300 text-[#644FC1]
-rounded-md shadow-sm p-6 sm:p-8
+border-3 border-[#644FC1] text-[#644FC1]
+rounded-2xl shadow-sm p-6 sm:p-8
 flex flex-col items-center justify-between text-center bg-white mx-auto
 transition-all duration-300
 "
