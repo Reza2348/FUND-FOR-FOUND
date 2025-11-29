@@ -20,9 +20,6 @@ const GoogleLoginComponent = dynamic(
   { ssr: false }
 );
 
-// این بخش حذف شده است:
-// export const signUpSchema = (t: TFunction) => ...
-
 type SignUpFormData = {
   firstName: string;
   lastName: string;
@@ -34,7 +31,7 @@ export default function SignUpPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const { t, ready } = useTranslation(); // تعریف schema در داخل کامپوننت برای جلوگیری از خطای export // اگرچه می‌توانست بیرون از کامپوننت باشد اما بدون export.
+  const { t, ready } = useTranslation();
 
   const getSignUpSchema = (t: TFunction) =>
     z.object({

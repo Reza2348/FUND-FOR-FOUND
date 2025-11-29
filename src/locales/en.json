@@ -88,5 +88,18 @@
   "invalid_email": "Invalid email address",
   "password_min_length": "Password must be at least 6 characters",
   "registration_success": "Registration successful!",
-  "already_have_account": "Already have an account?"
+  "already_have_account": "Already have an account?",
+  "Contact Us": "Contact Us",
+  "Name": "Name",
+  "Email": "Email",
+  "Message": "Message",
+  "Enter your name": "Enter your name",
+  "Enter your email": "Enter your email",
+  "Write your message...": "Write your message...",
+  "Name is required": "Name is required",
+  "Invalid email address": "Invalid email address",
+  "Message is required": "Message is required",
+  "Message sent successfully!": "Message sent successfully!",
+  "Submit": "Submit",
+  "Sending...": "Sending..."
 }

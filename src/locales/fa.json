@@ -89,5 +89,18 @@
   "invalid_email": "آدرس ایمیل نامعتبر است",
   "password_min_length": "رمز عبور باید حداقل ۶ کاراکتر باشد",
   "registration_success": "ثبت‌ نام با موفقیت انجام شد!",
-  "already_have_account": "قبلاً حساب کاربری دارید؟"
+  "already_have_account": "قبلاً حساب کاربری دارید؟",
+  "Contact Us": "تماس با ما",
+  "Name": "نام",
+  "Email": "ایمیل",
+  "Message": "پیام",
+  "Enter your name": "نام خود را وارد کنید",
+  "Enter your email": "ایمیل خود را وارد کنید",
+  "Write your message...": "پیام خود را بنویسید...",
+  "Name is required": "نام الزامی است",
+  "Invalid email address": "آدرس ایمیل نامعتبر است",
+  "Message is required": "پیام الزامی است",
+  "Message sent successfully!": "پیام با موفقیت ارسال شد",
+  "Submit": "ارسال",
+  "Sending...": "در حال ارسال..."
 }

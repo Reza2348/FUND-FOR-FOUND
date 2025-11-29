@@ -13,10 +13,15 @@ const GoogleLoginComponent: React.FC<GoogleLoginComponentProps> = ({
 }) => {
   const handleGoogleSignIn = async () => {
     try {
+      const redirectUrl =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/explore`
+          : undefined;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:3000",
+          redirectTo: redirectUrl,
         },
       });
 
@@ -31,7 +36,7 @@ const GoogleLoginComponent: React.FC<GoogleLoginComponentProps> = ({
         console.error("Unexpected error:", err.message);
         alert("Unexpected error while logging in:" + err.message);
       } else {
-        console.error("Unexpected error::", err);
+        console.error("Unexpected error:", err);
         alert("Unknown error during login");
       }
     }

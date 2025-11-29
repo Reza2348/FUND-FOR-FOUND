@@ -89,5 +89,18 @@
   "invalid_email": "Неверный адрес электронной почты",
   "password_min_length": "Пароль должен содержать не менее 6 символов",
   "registration_success": "Регистрация прошла успешно!",
-  "already_have_account": "Уже есть аккаунт?"
+  "already_have_account": "Уже есть аккаунт?",
+  "Contact Us": "Свяжитесь с нами",
+  "Name": "Имя",
+  "Email": "Электронная почта",
+  "Message": "Сообщение",
+  "Enter your name": "Введите ваше имя",
+  "Enter your email": "Введите ваш email",
+  "Write your message...": "Напишите ваше сообщение...",
+  "Name is required": "Имя обязательно",
+  "Invalid email address": "Неверный адрес электронной почты",
+  "Message is required": "Сообщение обязательно",
+  "Message sent successfully!": "Сообщение успешно отправлено!",
+  "Submit": "Отправить",
+  "Sending...": "Отправка..."
 }

@@ -89,5 +89,18 @@
   "invalid_email": "عنوان البريد الإلكتروني غير صالح",
   "password_min_length": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
   "registration_success": "تم التسجيل بنجاح!",
-  "already_have_account": "هل لديك حساب بالفعل؟"
+  "already_have_account": "هل لديك حساب بالفعل؟",
+  "Contact Us": "اتصل بنا",
+  "Name": "الاسم",
+  "Email": "البريد الإلكتروني",
+  "Message": "الرسالة",
+  "Enter your name": "أدخل اسمك",
+  "Enter your email": "أدخل بريدك الإلكتروني",
+  "Write your message...": "اكتب رسالتك...",
+  "Name is required": "الاسم مطلوب",
+  "Invalid email address": "عنوان البريد الإلكتروني غير صالح",
+  "Message is required": "الرسالة مطلوبة",
+  "Message sent successfully!": "تم إرسال الرسالة بنجاح!",
+  "Submit": "إرسال",
+  "Sending...": "جارٍ الإرسال..."
 }

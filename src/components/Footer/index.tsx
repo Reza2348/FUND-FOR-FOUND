@@ -32,7 +32,7 @@ const FOOTER_NAV_KEYS = [
     titleKey: "aboutUs",
     links: [
       { nameKey: "aboutUs", href: "/about" },
-      { nameKey: "contactUs", href: "/contact" },
+      { nameKey: "contactUs", href: "/contactUs" },
     ],
   },
   {
