@@ -102,5 +102,7 @@
   "Message is required": "Сообщение обязательно",
   "Message sent successfully!": "Сообщение успешно отправлено!",
   "Submit": "Отправить",
-  "Sending...": "Отправка..."
+  "Sending...": "Отправка...",
+  "Loading...": "Загрузка...",
+  "You must be logged in to view your dashboard.": "Вы должны войти в систему, чтобы просмотреть свою панель управления."
 }

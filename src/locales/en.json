@@ -101,5 +101,7 @@
   "Message is required": "Message is required",
   "Message sent successfully!": "Message sent successfully!",
   "Submit": "Submit",
-  "Sending...": "Sending..."
+  "Sending...": "Sending...",
+  "Loading...": "Loading...",
+  "You must be logged in to view your dashboard.": "You must be logged in to view your dashboard."
 }

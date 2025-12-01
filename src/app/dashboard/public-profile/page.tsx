@@ -8,6 +8,10 @@ import BrandsContent from "@/components/BrandsContent/BrandsContent";
 import ContributionsContent from "@/components/ContributionsContent/ContributionsContent";
 import AboutContent from "@/components/AboutContent/AboutContent";
 
+interface GoogleUserMetadata {
+  full_name?: string;
+  [key: string]: any;
+}
 export default function ProfilePage() {
   const [userName, setUserName] = useState<string>("Guest");
   const [tab, setTab] = useState<"brands" | "contributions" | "about">(
@@ -23,18 +27,16 @@ export default function ProfilePage() {
 
       if (authError || !currentUser) return;
 
-      // ابتدا سعی می‌کنیم نام از جدول profile بگیریم
       const { data: profile } = await supabase
         .from("profiles")
         .select("first_name")
         .eq("user_id", currentUser.id)
         .maybeSingle();
 
-      // اگر موجود نبود، از گوگل یا user_metadata استفاده کنیم
       const name =
         profile?.first_name ||
-        (currentUser.user_metadata as any)?.full_name || // OAuth گوگل
-        currentUser.email?.split("@")[0] || // fallback ایمیل
+        (currentUser.user_metadata as GoogleUserMetadata)?.full_name || // OAuth گوگل
+        currentUser.email?.split("@")[0] ||
         "Guest";
 
       setUserName(name);
@@ -57,7 +59,6 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto lg:ml-3 mt-3 w-full sm:w-11/12 md:w-4/5 lg:w-5xl xl:w-6xl bg-white shadow-md rounded-lg overflow-hidden">
-      {/* Header */}
       <header
         className="relative text-white pt-6 px-4 sm:px-6 h-[160px] sm:h-48 lg:h-64"
         style={{
@@ -84,7 +85,6 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Tabs */}
       <nav className="border-b border-gray-200 mt-2 px-4 sm:px-6 overflow-x-auto">
         <div className="flex space-x-4 sm:space-x-8 min-w-max ml-2">
           {["brands", "contributions", "about"].map((t) => (
@@ -115,7 +115,6 @@ export default function ProfilePage() {
         </div>
       </nav>
 
-      {/* Tab Content */}
       <div className="p-4 sm:p-6 text-gray-700">{renderTabContent()}</div>
     </div>
   );

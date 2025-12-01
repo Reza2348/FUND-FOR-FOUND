@@ -102,5 +102,7 @@
   "Message is required": "الرسالة مطلوبة",
   "Message sent successfully!": "تم إرسال الرسالة بنجاح!",
   "Submit": "إرسال",
-  "Sending...": "جارٍ الإرسال..."
+  "Sending...": "جارٍ الإرسال...",
+  "Loading...": "جارٍ التحميل...",
+  "You must be logged in to view your dashboard.": "يجب عليك تسجيل الدخول لعرض لوحة القيادة الخاصة بك."
 }
