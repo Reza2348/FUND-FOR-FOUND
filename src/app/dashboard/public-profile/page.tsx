@@ -10,8 +10,10 @@ import AboutContent from "@/components/AboutContent/AboutContent";
 
 interface GoogleUserMetadata {
   full_name?: string;
-  [key: string]: any;
+
+  [key: string]: unknown;
 }
+
 export default function ProfilePage() {
   const [userName, setUserName] = useState<string>("Guest");
   const [tab, setTab] = useState<"brands" | "contributions" | "about">(
@@ -33,9 +35,13 @@ export default function ProfilePage() {
         .eq("user_id", currentUser.id)
         .maybeSingle();
 
+      const metadata = currentUser.user_metadata as
+        | GoogleUserMetadata
+        | undefined;
+
       const name =
         profile?.first_name ||
-        (currentUser.user_metadata as GoogleUserMetadata)?.full_name || // OAuth گوگل
+        metadata?.full_name || // OAuth گوگل
         currentUser.email?.split("@")[0] ||
         "Guest";
 

@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { User } from "@supabase/supabase-js";
 
 export function useUser(idleTime = 20000) {
   const router = useRouter();
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<
     "loading" | "authenticated" | "unauthenticated"
   >("loading");
