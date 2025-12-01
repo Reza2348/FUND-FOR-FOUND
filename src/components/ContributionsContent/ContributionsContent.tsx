@@ -3,23 +3,18 @@ import Image from "next/image";
 
 export default function ContributionsContent() {
   return (
-    // max-w-6xl و mx-auto برای مرکزیت بخش در صفحه دسکتاپ
     <div className="max-w-6xl mx-auto px-4 space-y-6">
       <h3 className="text-xl font-semibold flex items-center mb-4 text-gray-800">
         <span className="w-3 h-3 bg-indigo-600 rounded-sm mr-2"></span>
         Contributions
       </h3>
 
-      {/* 💥 اصلاح شده: اضافه شدن justify-center */}
-      {/* justify-center: کارت‌ها را در هر ستون به صورت افقی مرکز می‌کند */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:justify-items-center">
-        {/* کارت اول: wish work */}
-        {/* 💥 اصلاح شده: اضافه شدن max-w-xs (حدود 320 پیکسل) */}
-        <div className="max-w-xs bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-          <div className="h-28 bg-black flex justify-center items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-4 justify-center">
+        <div className="max-w-xs bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 mx-auto">
+          <div className="h-28 bg-black flex justify-center items-center p-4">
             <Image
               src="/Clip path group2.svg"
-              alt="wish work logo"
+              alt="logo"
               width={40}
               height={40}
               className="w-auto h-10"
@@ -46,9 +41,6 @@ export default function ContributionsContent() {
             </div>
           </div>
         </div>
-
-        {/* کارت دوم: Kelaasor */}
-        {/* 💥 اصلاح شده: اضافه شدن max-w-xs (حدود 320 پیکسل) */}
         <div className="max-w-xs bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
           <div className="h-28 bg-[#00695C] flex justify-center items-center">
             <Image

@@ -102,5 +102,7 @@
   "Message is required": "پیام الزامی است",
   "Message sent successfully!": "پیام با موفقیت ارسال شد",
   "Submit": "ارسال",
-  "Sending...": "در حال ارسال..."
+  "Sending...": "در حال ارسال...",
+  "Loading...": "در حال بارگذاری...",
+  " You must be logged in to view your dashboard.": "برای مشاهده داشبورد خود باید وارد سیستم شوید."
 }

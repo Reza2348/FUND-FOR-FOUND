@@ -15,7 +15,7 @@ const GoogleLoginComponent: React.FC<GoogleLoginComponentProps> = ({
     try {
       const redirectUrl =
         typeof window !== "undefined"
-          ? `${window.location.origin}/explore`
+          ? `${window.location.origin}/`
           : undefined;
 
       const { error } = await supabase.auth.signInWithOAuth({
