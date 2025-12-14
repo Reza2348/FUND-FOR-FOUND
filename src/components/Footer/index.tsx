@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher/LanguageSwitcher";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import ThemeSelector from "../ThemeSelector/ThemeSelector";
 
 interface FooterLink {
   nameKey: string;
@@ -61,7 +62,6 @@ const UTILITY_LINKS: FooterLink[] = [
   { nameKey: "privacyPolicy", href: "/privacy" },
 ];
 
-// LinkComponent برای Next.js 13+ بدون <a> داخلی
 const LinkComponent = ({ href, external, children }: LinkComponentProps) => {
   const isExternal =
     external ||
@@ -71,7 +71,7 @@ const LinkComponent = ({ href, external, children }: LinkComponentProps) => {
 
   const commonProps = {
     className:
-      "group inline-flex items-center text-sm hover:text-gray-800 transition-colors",
+      "group inline-flex items-center text-sm text-gray-800 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors",
   };
 
   if (isExternal) {
@@ -102,7 +102,7 @@ export default function Footer() {
 
   if (!hasMounted) {
     return (
-      <footer className="bg-[#F5F5F5] text-[#444444] rounded-2xl">
+      <footer className="text-gray-800 dark:text-gray-200 rounded-2xl">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12"></div>
       </footer>
     );
@@ -126,7 +126,7 @@ export default function Footer() {
 
   return (
     <footer
-      className={`bg-[#F5F5F5] text-[#444444] rounded-2xl mt-16 sm:mt-20 md:mt-24 ${
+      className={`bg-[#F5F5F5] dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded-2xl mt-16 sm:mt-20 md:mt-24 ${
         isRTL ? "text-right" : "text-left"
       }`}
       dir={containerDir}
@@ -138,7 +138,7 @@ export default function Footer() {
               key={section.title}
               className={`text-center sm:text-left ${textAlignment}`}
             >
-              <h3 className="text-sm font-semibold text-gray-900">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                 {section.title}
               </h3>
               <ul className="mt-4 space-y-2">
@@ -148,7 +148,7 @@ export default function Footer() {
                       {link.name}
                       {link.badge && (
                         <span
-                          className={`${marginForBadge} inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium`}
+                          className={`${marginForBadge} inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 text-xs font-medium`}
                         >
                           {link.badge}
                         </span>
@@ -162,9 +162,13 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-[#AA99EC]">
+      <div className="border-t border-[#AA99EC] dark:border-purple-700">
         <div className="max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4 mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <LanguageSwitcher />
+
+          <div>
+            <ThemeSelector />
+          </div>
 
           <div className="flex flex-wrap justify-center items-center gap-4">
             {UTILITY_LINKS.map((link) => (
@@ -175,56 +179,42 @@ export default function Footer() {
           </div>
 
           <div className="flex flex-wrap gap-4 justify-center mt-2 sm:mt-0">
-            <Link
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter"
-            >
-              <FaTwitter
-                size={26}
-                className="text-gray-500 hover:text-blue-900 transition-colors"
-              />
-            </Link>
-            <Link
-              href="https://github.com/Reza2348"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-            >
-              <FaGithub
-                size={26}
-                className="text-gray-500 hover:text-blue-900 transition-colors"
-              />
-            </Link>
-            <Link
-              href="https://discord.gg"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Discord"
-            >
-              <FaDiscord
-                size={26}
-                className="text-gray-500 hover:text-blue-900 transition-colors"
-              />
-            </Link>
-            <Link
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-            >
-              <FaLinkedin
-                size={26}
-                className="text-gray-500 hover:text-blue-900 transition-colors"
-              />
-            </Link>
-            <a href="mailto:info@example.com" aria-label="Email">
-              <MdEmail
-                size={26}
-                className="text-gray-500 hover:text-blue-900 transition-colors"
-              />
-            </a>
+            {[
+              {
+                icon: FaTwitter,
+                href: "https://twitter.com",
+                label: "Twitter",
+              },
+              {
+                icon: FaGithub,
+                href: "https://github.com/Reza2348",
+                label: "GitHub",
+              },
+              { icon: FaDiscord, href: "https://discord.gg", label: "Discord" },
+              {
+                icon: FaLinkedin,
+                href: "https://linkedin.com",
+                label: "LinkedIn",
+              },
+              {
+                icon: MdEmail,
+                href: "mailto:info@example.com",
+                label: "Email",
+              },
+            ].map(({ icon: Icon, href, label }) => (
+              <Link
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+              >
+                <Icon
+                  size={26}
+                  className="text-gray-500 dark:text-gray-300 hover:text-blue-900 dark:hover:text-blue-400 transition-colors"
+                />
+              </Link>
+            ))}
           </div>
         </div>
       </div>

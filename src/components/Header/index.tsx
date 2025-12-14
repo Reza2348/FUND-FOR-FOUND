@@ -225,7 +225,7 @@ const Header: React.FC = () => {
 
   if (!hasMounted) {
     return (
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="border-b border-gray-200">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 h-16 md:h-20">
           <Link href="/">
             <Image
@@ -249,7 +249,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className=" border-b border-gray-200">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 md:px-4 lg:px-8 h-16 md:h-20">
         {/* Logo */}
         <div className="flex items-center gap-2">
@@ -271,9 +271,7 @@ const Header: React.FC = () => {
               href={link.href}
               onClick={() => setActiveLink(link.href)}
               className={`text-sm font-medium transition-colors ${
-                activeLink === link.href
-                  ? "text-[#5b4bff]"
-                  : "text-gray-700 hover:text-black"
+                activeLink === link.href ? "active" : "link"
               }`}
             >
               {link.label}
@@ -285,7 +283,7 @@ const Header: React.FC = () => {
           {/* Search */}
           <div className="relative">
             <HiSearch
-              className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-2 top-1/2 -translate-y-1/2  text-gray-400"
               size={18}
             />
             <input
@@ -492,7 +490,7 @@ const Header: React.FC = () => {
                 className="px-4 py-3 bg-[#f2f0ff] text-[#5b4bff] rounded-xl text-base font-medium transition inline-block text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t("login")}
+                {t("Login/singnup")}
               </Link>
               <Link
                 href="/auth/signup"

@@ -53,8 +53,8 @@ export default function Home() {
     );
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center">
-      <h1 className="text-2xl md:text-3xl font-bold text-[#270F94] mb-4 mt-11">
+    <div className="min-h-screen  flex flex-col items-center justify-center px-4 text-center">
+      <h1 className="text-2xl md:text-3xl font-bold text-[#270f94] mb-4 mt-11">
         {t("createProfileTitle")}
       </h1>
       <p className="text-[#717171] max-w-xl mb-8">
@@ -65,7 +65,7 @@ export default function Home() {
         className="w-full max-w-[319px] h-auto min-h-[459px]
 border-3 border-[#644FC1] text-[#644FC1]
 rounded-2xl shadow-sm p-6 sm:p-8
-flex flex-col items-center justify-between text-center bg-white mx-auto
+flex flex-col items-center justify-between text-center  mx-auto
 transition-all duration-300
 "
       >
@@ -81,7 +81,7 @@ transition-all duration-300
             {t("brandOrOrganization")}
           </h2>
 
-          <p className="text-sm text-gray-600 mb-6 px-2 sm:px-4 leading-relaxed">
+          <p className="text-sm text-[#717171] mb-6 px-2 sm:px-4 leading-relaxed">
             {t("brandEstablishedDescription")}
           </p>
         </div>
