@@ -23,10 +23,14 @@ i18n
     resources,
     fallbackLng: "en",
     interpolation: { escapeValue: false },
+
     detection: {
-      order: ["localStorage", "navigator", "htmlTag", "path", "subdomain"],
-      caches: ["localStorage"],
+      order: ["cookie", "navigator", "htmlTag"],
+      caches: ["cookie"],
+      lookupCookie: "i18next",
+      cookieMinutes: 60 * 24 * 30,
     },
+
     react: { useSuspense: false },
   });
 
